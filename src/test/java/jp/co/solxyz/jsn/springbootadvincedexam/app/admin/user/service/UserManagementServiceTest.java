@@ -169,7 +169,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -199,7 +199,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -229,7 +229,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -268,7 +268,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -297,7 +297,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -329,7 +329,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -361,7 +361,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithPassword = new AccountProfile();
         userManagementFormWithPassword.setUserId(TEST_UUID);
-        userManagementFormWithPassword.setAdmin(true);
+        userManagementFormWithPassword.setIsAdmin(true);
         userManagementFormWithPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithPassword.setUserName("testUsername");
         userManagementFormWithPassword.setPassword("testPassword");
@@ -410,7 +410,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithoutPassword = new AccountProfile();
         userManagementFormWithoutPassword.setUserId(TEST_UUID);
-        userManagementFormWithoutPassword.setAdmin(true);
+        userManagementFormWithoutPassword.setIsAdmin(true);
         userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithoutPassword.setUserName("testUsername");
         userManagementFormWithoutPassword.setPassword("");
@@ -440,7 +440,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithoutPassword = new AccountProfile();
         userManagementFormWithoutPassword.setUserId(TEST_UUID);
-        userManagementFormWithoutPassword.setAdmin(true);
+        userManagementFormWithoutPassword.setIsAdmin(true);
         userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithoutPassword.setUserName("testUsername");
         userManagementFormWithoutPassword.setPassword("");
@@ -472,7 +472,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithoutPassword = new AccountProfile();
         userManagementFormWithoutPassword.setUserId(TEST_UUID);
-        userManagementFormWithoutPassword.setAdmin(true);
+        userManagementFormWithoutPassword.setIsAdmin(true);
         userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithoutPassword.setUserName("testUsername");
         userManagementFormWithoutPassword.setPassword("");
@@ -505,7 +505,7 @@ class UserManagementServiceTest {
 
         AccountProfile userManagementFormWithoutPassword = new AccountProfile();
         userManagementFormWithoutPassword.setUserId(TEST_UUID);
-        userManagementFormWithoutPassword.setAdmin(true);
+        userManagementFormWithoutPassword.setIsAdmin(true);
         userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithoutPassword.setUserName("testUsername");
         userManagementFormWithoutPassword.setPassword("");
@@ -531,7 +531,7 @@ class UserManagementServiceTest {
     void shouldThrowNoSuchElementExceptionIfUserToUpdateDoesNotExist() {
         AccountProfile userManagementFormWithoutPassword = new AccountProfile();
         userManagementFormWithoutPassword.setUserId(TEST_UUID);
-        userManagementFormWithoutPassword.setAdmin(true);
+        userManagementFormWithoutPassword.setIsAdmin(true);
         userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
         userManagementFormWithoutPassword.setUserName("testUsername");
         userManagementFormWithoutPassword.setPassword("");
