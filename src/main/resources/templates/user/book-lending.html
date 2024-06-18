@@ -68,8 +68,8 @@
             <td class="table-cell" th:text="${book.publisher}"></td>
             <td class="table-cell" th:text="${book.author}"></td>
             <td class="table-cell" th:text="${#temporals.format(book.rentalAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-            <td class="table-cell">
-                <label id="return-book" style="cursor: pointer" class="material-symbols-outlined"
+            <td class="table-cell" style="text-align: center; vertical-align: middle;">
+                <label id="return-book" style="cursor: pointer;display: inline-block;vertical-align: middle;" class="material-symbols-outlined"
                        th:attr="data-isbn=${book.isbn}">unarchive</label>
             </td>
         </tr>
