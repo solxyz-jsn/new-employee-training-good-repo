@@ -29,6 +29,9 @@ public class BookInventoryManagerTest {
     @Mock
     private BookRepository bookRepository;
 
+    @Mock
+    private BookCheckoutHistoryRepository bookCheckoutHistoryRepository;
+
     private final LocalDateTime TEST_TIME = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
 
     @BeforeEach
