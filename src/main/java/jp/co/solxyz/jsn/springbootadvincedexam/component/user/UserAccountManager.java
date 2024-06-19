@@ -103,8 +103,8 @@ public class UserAccountManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserWithPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt) throws OptimisticLockingFailureException,
-            JpaSystemException, DataAccessException {
+    public void updateUserWithPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt)
+            throws OptimisticLockingFailureException, JpaSystemException, DataAccessException {
         int result;
         try {
             result = userAccountRepository.updateWithPassword(updatedUserAccount.getUserId(), updatedUserAccount.getIsAdmin(),
@@ -134,8 +134,8 @@ public class UserAccountManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserWithoutPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt) throws OptimisticLockingFailureException
-            , JpaSystemException, DataAccessException {
+    public void updateUserWithoutPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt)
+            throws OptimisticLockingFailureException, JpaSystemException, DataAccessException {
         int result;
         try {
             result = userAccountRepository.updateWithoutPassword(updatedUserAccount.getUserId(), updatedUserAccount.getIsAdmin(),
