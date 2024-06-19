@@ -29,7 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class UserManagerTest {
+class UserAccountManagerTest {
 
     @InjectMocks
     UserAccountManager userAccountManager;

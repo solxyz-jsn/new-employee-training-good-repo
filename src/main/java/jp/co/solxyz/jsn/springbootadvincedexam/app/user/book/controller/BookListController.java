@@ -41,12 +41,12 @@ public class BookListController {
     /**
      * 書籍一覧画面表示
      * @return 書籍一覧画面
-     * @throws JsonProcessingException JSON変換例外
+     * @throws JsonProcessingException 指定した日付のフォーマットが不適切、または変換対象がJSON形式にシリアライズできない場合
      */
     @GetMapping
     public ModelAndView bookList() throws JsonProcessingException {
         ModelAndView mav = new ModelAndView("user/book-list");
-
+        
         JavaTimeModule module = new JavaTimeModule();
         module.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
         module.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy/MM/dd")));

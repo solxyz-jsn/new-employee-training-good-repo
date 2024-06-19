@@ -47,8 +47,9 @@ public class BookInventoryManager {
      * ISBNから書籍を1件取得
      * @param isbn ISBN
      * @return 書籍
+     * @throws NoSuchElementException DBに指定されたISBNの書籍が存在しない場合
      */
-    public Book getBookByIsbn(String isbn) {
+    public Book getBookByIsbn(String isbn) throws NoSuchElementException {
         Book book = bookRepository.findById(isbn).orElse(null);
         if (book == null) {
             log.info("指定されたISBNの書籍が存在しません。");
@@ -61,7 +62,7 @@ public class BookInventoryManager {
      * 渡された在庫数が現在の在庫数よりも少ないかチェック
      * @param inputtedStock 比較する在庫数
      * @param availableStock 現在の在庫数
-     * @throws IllegalArgumentException inputtedStockがavailableStockを下回る場合
+     * @throws IllegalArgumentException 変更在庫数がDBに保存されている現在在庫数を下回る場合
      */
     public void compareInputStockLowerThanCurrent(int inputtedStock, int availableStock) throws IllegalArgumentException {
         if (inputtedStock < availableStock) {
