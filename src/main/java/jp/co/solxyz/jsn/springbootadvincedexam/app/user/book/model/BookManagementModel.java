@@ -23,7 +23,7 @@ public class BookManagementModel {
      * @param stock 在庫数
      * @param createdAt 作成日時
      * @param updatedAt 更新日時
-     * @throws IllegalArgumentException ISBNが13桁の数字でない場合
+     * @throws IllegalArgumentException ISBNが13桁の数字ではない場合
      */
     public BookManagementModel(String isbn, String title, String author, String publisher,
             String description, int stock, LocalDateTime createdAt,

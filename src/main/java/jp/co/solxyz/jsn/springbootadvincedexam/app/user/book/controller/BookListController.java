@@ -41,7 +41,7 @@ public class BookListController {
     /**
      * 書籍一覧画面表示
      * @return 書籍一覧画面
-     * @throws JsonProcessingException JSON変換例外
+     * @throws JsonProcessingException 指定した日付のフォーマットが不適切、または変換対象がJSON形式にシリアライズできない場合
      */
     @GetMapping
     public ModelAndView bookList() throws JsonProcessingException {
