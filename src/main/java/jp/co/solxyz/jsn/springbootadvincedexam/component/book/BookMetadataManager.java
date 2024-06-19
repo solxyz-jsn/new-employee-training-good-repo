@@ -25,6 +25,11 @@ public class BookMetadataManager {
     /** 書籍貸出履歴リポジトリ */
     private final BookCheckoutHistoryRepository bookCheckoutHistoryRepository;
 
+    /**
+     * コンストラクタ
+     * @param bookRepository 書籍リポジトリ
+     * @param bookCheckoutHistoryRepository 書籍貸出履歴リポジトリ
+     */
     public BookMetadataManager(BookRepository bookRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository) {
         this.bookRepository = bookRepository;
         this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
