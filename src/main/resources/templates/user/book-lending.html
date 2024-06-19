@@ -12,37 +12,38 @@
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
 
     <script th:inline="javascript">
-        /*<![CDATA[*/
-            const books = JSON.parse(/*[[ ${booksJson} ]]*/ null);
-        /*]]>*/
+/*<![CDATA[*/
+const books = JSON.parse(/*[[ ${booksJson} ]]*/ null);
+/*]]>*/
 
-    const csrfToken = document.querySelector('meta[name="_csrf"]').content;
-    const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
+const csrfToken = document.querySelector('meta[name="_csrf"]').content;
+const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
 
-    function returnBook(event) {
-    const isbn = event.target.getAttribute("data-isbn");
-    fetch("/api/book/return", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            [csrfHeader]: csrfToken,
-        },
-        body: JSON.stringify({
-            isbn: isbn,
-        }),
-    })
+function returnBook(event) {
+  const isbn = event.target.getAttribute("data-isbn");
+  fetch("/api/book/return", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      [csrfHeader]: csrfToken,
+    },
+    body: JSON.stringify({
+      isbn: isbn,
+    }),
+  })
     .then((response) => {
-        if (response.ok) {
-            alert("書籍を返却しました");
-            location.reload();
-        } else {
-            alert("書籍の返却に失敗しました");
-        }
+      if (response.ok) {
+        alert("書籍を返却しました");
+        location.reload();
+      } else {
+        alert("書籍の返却に失敗しました");
+      }
     })
     .catch((error) => {
-        console.error("Error:", error);
+      console.error("Error:", error);
     });
 }
+
     </script>
 </head>
 <body>

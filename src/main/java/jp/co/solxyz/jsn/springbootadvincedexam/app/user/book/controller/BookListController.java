@@ -46,7 +46,7 @@ public class BookListController {
     @GetMapping
     public ModelAndView bookList() throws JsonProcessingException {
         ModelAndView mav = new ModelAndView("user/book-list");
-
+        
         JavaTimeModule module = new JavaTimeModule();
         module.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy/MM/dd")));
         module.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern("yyyy/MM/dd")));

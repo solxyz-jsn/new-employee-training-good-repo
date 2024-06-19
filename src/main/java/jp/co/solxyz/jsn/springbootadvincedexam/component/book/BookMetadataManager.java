@@ -42,7 +42,7 @@ public class BookMetadataManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void registerBook(Book book) throws IllegalArgumentException, DataAccessException{
+    public void registerBook(Book book) throws IllegalArgumentException, DataAccessException {
         try {
             Book avaliableBook = bookRepository.findById(book.getIsbn()).orElse(null);
             if (avaliableBook != null) {
@@ -66,7 +66,8 @@ public class BookMetadataManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateBook(Book book, LocalDateTime optimisticLockUpdatedAt) throws OptimisticLockingFailureException, NoSuchElementException, DataAccessException{
+    public void updateBook(Book book, LocalDateTime optimisticLockUpdatedAt)
+            throws OptimisticLockingFailureException, NoSuchElementException, DataAccessException {
         Book currentBook = bookRepository.findById(book.getIsbn()).orElse(null);
         if (currentBook == null) {
             log.info("指定されたISBNの書籍が存在しません。");
@@ -97,7 +98,7 @@ public class BookMetadataManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteByIsbn(String isbn) throws NoSuchElementException, IllegalStateException, DataAccessException{
+    public void deleteByIsbn(String isbn) throws NoSuchElementException, IllegalStateException, DataAccessException {
         Book book = bookRepository.findById(isbn).orElse(null);
 
         if (book == null) {

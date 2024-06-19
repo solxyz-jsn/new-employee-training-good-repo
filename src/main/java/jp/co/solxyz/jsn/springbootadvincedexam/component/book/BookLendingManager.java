@@ -53,7 +53,7 @@ public class BookLendingManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public List<Book> checkout(String userId, List<String> isbnList) throws DataAccessException{
+    public List<Book> checkout(String userId, List<String> isbnList) throws DataAccessException {
         // 借りられなかった本
         List<Book> notCheckoutBooks = new ArrayList<>();
 

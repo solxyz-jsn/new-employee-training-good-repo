@@ -1,9 +1,9 @@
 package jp.co.solxyz.jsn.springbootadvincedexam.component.user;
 
-import jp.co.solxyz.jsn.springbootadvincedexam.util.PasswordUtility;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.user.UserAccount;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.user.UserAccountRepository;
+import jp.co.solxyz.jsn.springbootadvincedexam.util.PasswordUtility;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -45,7 +45,7 @@ public class UserAccountManager {
      * @param passwordUtility パスワードユーティリティ
      */
     public UserAccountManager(UserAccountRepository userAccountRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository,
-                              PasswordUtility passwordUtility) {
+            PasswordUtility passwordUtility) {
         this.userAccountRepository = userAccountRepository;
         this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
         this.passwordUtility = passwordUtility;
@@ -67,7 +67,7 @@ public class UserAccountManager {
      * @return ユーザ情報
      * @throws NoSuchElementException DBに存在しないユーザIDが指定された場合
      */
-    public UserAccount findByIdWithoutPassword(String userId) throws NoSuchElementException{
+    public UserAccount findByIdWithoutPassword(String userId) throws NoSuchElementException {
         return userAccountRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.warn("存在しないユーザIDです。");
@@ -81,7 +81,7 @@ public class UserAccountManager {
      * @throws JpaSystemException 一意制約違反が発生した場合
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
-    public void addUser(UserAccount userAccount) throws DataAccessException, JpaSystemException{
+    public void addUser(UserAccount userAccount) throws DataAccessException, JpaSystemException {
         userAccount.setPassword(passwordUtility.hashPassword(userAccount.getPassword()));
         try {
             userAccountRepository.save(userAccount);
@@ -104,7 +104,7 @@ public class UserAccountManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateUserWithPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt) throws OptimisticLockingFailureException,
-            JpaSystemException, DataAccessException{
+            JpaSystemException, DataAccessException {
         int result;
         try {
             result = userAccountRepository.updateWithPassword(updatedUserAccount.getUserId(), updatedUserAccount.getIsAdmin(),
@@ -135,7 +135,7 @@ public class UserAccountManager {
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateUserWithoutPassword(UserAccount updatedUserAccount, Instant optimisticLockUpdatedAt) throws OptimisticLockingFailureException
-            , JpaSystemException, DataAccessException{
+            , JpaSystemException, DataAccessException {
         int result;
         try {
             result = userAccountRepository.updateWithoutPassword(updatedUserAccount.getUserId(), updatedUserAccount.getIsAdmin(),
@@ -164,7 +164,7 @@ public class UserAccountManager {
      * @throws DataAccessException DBとの接続で問題が発生した場合
      */
     @Transactional(rollbackFor = Exception.class)
-    public void deleteUser(String userId) throws NoSuchElementException, IllegalStateException, DataAccessException{
+    public void deleteUser(String userId) throws NoSuchElementException, IllegalStateException, DataAccessException {
         userAccountRepository.findById(userId).orElseThrow(() -> {
             log.warn("削除対象が存在しません。");
             return new NoSuchElementException("存在しないユーザIDか、既にユーザが削除されています。");

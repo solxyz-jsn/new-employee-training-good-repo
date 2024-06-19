@@ -49,7 +49,7 @@ public class BookInventoryManager {
      * @return 書籍
      * @throws NoSuchElementException DBに指定されたISBNの書籍が存在しない場合
      */
-    public Book getBookByIsbn(String isbn) throws NoSuchElementException{
+    public Book getBookByIsbn(String isbn) throws NoSuchElementException {
         Book book = bookRepository.findById(isbn).orElse(null);
         if (book == null) {
             log.info("指定されたISBNの書籍が存在しません。");

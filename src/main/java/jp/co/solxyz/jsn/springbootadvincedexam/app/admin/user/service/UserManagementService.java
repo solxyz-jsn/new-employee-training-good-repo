@@ -6,11 +6,13 @@ import jp.co.solxyz.jsn.springbootadvincedexam.util.UUIDGenerator;
 import jp.co.solxyz.jsn.springbootadvincedexam.component.user.UserAccountManager;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.user.UserAccount;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * ユーザ管理サービス
@@ -91,8 +93,10 @@ public class UserManagementService {
     /**
      * ユーザ情報を削除する
      * @param userId 削除するユーザID
+     * @throws NoSuchElementException DBに存在しないユーザIDが指定された場合
+     * @throws IllegalStateException
      */
-    public void deleteUser(String userId) {
+    public void deleteUser(String userId) throws NoSuchElementException, IllegalStateException, DataAccessException {
         userAccountManager.deleteUser(userId);
     }
 }

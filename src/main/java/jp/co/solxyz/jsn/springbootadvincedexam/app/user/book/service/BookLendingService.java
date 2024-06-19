@@ -24,6 +24,7 @@ public class BookLendingService {
     public BookLendingService(BookLendingManager bookLendingManager) {
         this.bookLendingManager = bookLendingManager;
     }
+
     /**
      * ユーザの未返却書籍取得
      * @param userId ユーザID
