@@ -59,9 +59,6 @@ public class BookListController {
         mav.addObject("books", displayedBookModels);
         mav.addObject("booksJson", mapper.writeValueAsString(displayedBookModels));
         mav.addObject("bookCount", displayedBookModels.size());
-        mav.addObject("publisherCount", displayedBookModels.stream().map(BookModel::getPublisher).distinct().count());
-        mav.addObject("authorCount", displayedBookModels.stream().map(BookModel::getAuthor).distinct().count());
-        mav.addObject("unavailableBookCount", displayedBookModels.stream().filter(book -> book.getAvailableStock() == 0).count());
         mav.addObject("activeMenu", "bookList");
 
         return mav;

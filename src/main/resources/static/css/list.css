@@ -70,8 +70,8 @@
 }
 
 .book-list-main {
-    width: min(1190px, calc(100vw - 360px));
-    margin: 112px 48px 72px 330px;
+    width: min(1190px, calc(100vw - 394px));
+    margin: 112px 64px 72px 330px;
 }
 
 .page-heading {
@@ -91,69 +91,6 @@
     color: #5f6f85;
     font-size: 16px;
     font-weight: 600;
-}
-
-.summary-panel {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    align-items: center;
-    margin-bottom: 38px;
-    padding: 28px 26px;
-    background: rgba(255, 255, 255, 0.92);
-    border: 1px solid #edf2f8;
-    border-radius: 8px;
-    box-shadow: 0 16px 36px rgba(25, 46, 86, 0.12);
-}
-
-.summary-item {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    min-height: 66px;
-    padding: 0 22px;
-    border-right: 1px solid #e2e9f3;
-}
-
-.summary-item:last-child {
-    border-right: 0;
-}
-
-.summary-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    color: #2f64e5;
-    background: #eef4ff;
-    border-radius: 999px;
-    flex: 0 0 auto;
-}
-
-.summary-icon svg {
-    width: 27px;
-    height: 27px;
-}
-
-.summary-text {
-    display: grid;
-    grid-template-columns: auto auto;
-    align-items: end;
-    column-gap: 6px;
-    row-gap: 4px;
-    color: #5f6f85;
-    font-weight: 700;
-}
-
-.summary-text > span:first-child {
-    grid-column: 1 / -1;
-    white-space: nowrap;
-}
-
-.summary-text strong {
-    color: #2f64e5;
-    font-size: 34px;
-    line-height: 1;
 }
 
 .book-table-card {
@@ -571,17 +508,7 @@
 @media (max-width: 1120px) {
     .book-list-main {
         width: auto;
-        margin-right: 28px;
-    }
-
-    .summary-panel {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-    }
-
-    .summary-item {
-        border-right: 0;
-        padding: 0;
+        margin-right: 32px;
     }
 }
 
@@ -597,10 +524,6 @@
 }
 
 @media (max-width: 720px) {
-    .summary-panel {
-        grid-template-columns: 1fr;
-    }
-
     .table-footer {
         grid-template-columns: 1fr;
         justify-items: start;
