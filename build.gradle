@@ -38,11 +38,9 @@ dependencies {
     implementation group: 'org.springframework.session', name: 'spring-session-jdbc', version: '3.2.2'
     // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.0'
-    // https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-community-dialects
-    implementation 'org.hibernate.orm:hibernate-community-dialects'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'org.xerial:sqlite-jdbc:3.44.1.0'
+    runtimeOnly 'com.h2database:h2'
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
     implementation 'org.hibernate:hibernate-validator:8.0.1.Final'
 
@@ -55,18 +53,28 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-// SQLiteDBを起動し、初期データを挿入する
-tasks.register('setupDatabase', Exec) {
-    // SQLiteのCLIのパス
-    def sqliteCmdPath = "${projectDir}/sqlite/sqlite3.exe"
+// H2DBを作成し、初期データを挿入する
+tasks.register('setupDatabase', JavaExec) {
+    group = 'database'
+    description = 'Create the local H2 database and load initial data.'
+
     // .sqlファイルのパス
     def sqlFilePath = 'sql/sql.sql'
-    // dbファイルの相対パス
-    def dbFilePath = './sqlite/spring_boot_advanced_exam.db'
+    // dbファイルのパス
+    def dbFilePath = file("${projectDir}/h2/spring_boot_advanced_exam.mv.db")
+    def dbDirPath = file("${projectDir}/h2")
+    def dbUrl = 'jdbc:h2:file:./h2/spring_boot_advanced_exam;DB_CLOSE_DELAY=-1'
+
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.h2.tools.RunScript'
+    workingDir = projectDir
 
     // dbファイルが重複するとエラーが出る
-    onlyIf { !file(dbFilePath).exists() }
-    commandLine sqliteCmdPath, dbFilePath, '.read ' + sqlFilePath
+    onlyIf { !dbFilePath.exists() }
+    doFirst {
+        dbDirPath.mkdirs()
+    }
+    args '-url', dbUrl, '-user', 'sa', '-script', sqlFilePath
 }
 
 bootRun.dependsOn setupDatabase

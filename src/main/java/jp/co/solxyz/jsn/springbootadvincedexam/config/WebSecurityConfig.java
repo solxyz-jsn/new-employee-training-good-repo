@@ -1,5 +1,6 @@
 package jp.co.solxyz.jsn.springbootadvincedexam.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -25,7 +26,9 @@ public class WebSecurityConfig {
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.formLogin(formLogin -> formLogin
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(PathRequest.toH2Console()))
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
+                .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/book/list", true)
@@ -33,6 +36,7 @@ public class WebSecurityConfig {
                         .permitAll()).logout(logout -> logout.logoutSuccessUrl("/login"))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers(PathRequest.toH2Console()).permitAll()
                         .requestMatchers("/css/**", "/js/*", "/login", "/").permitAll()
                         .anyRequest().authenticated());
         return http.build();

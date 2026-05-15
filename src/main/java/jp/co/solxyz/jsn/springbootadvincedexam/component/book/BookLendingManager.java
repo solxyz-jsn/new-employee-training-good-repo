@@ -139,7 +139,7 @@ public class BookLendingManager {
             book.setAvailableStock(book.getAvailableStock() + 1);
             bookRepository.save(book);
 
-            bookCheckoutHistoryRepository.updateReturnAt(userId, isbn);
+            bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now());
         } catch (NoSuchElementException e) {
             log.info("ISBNの一致する書籍が見つかりません。", e);
             throw e;
