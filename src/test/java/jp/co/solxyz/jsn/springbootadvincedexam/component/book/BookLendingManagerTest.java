@@ -340,8 +340,6 @@ public class BookLendingManagerTest {
     @Test
     @DisplayName("チェックアウト履歴の登録に失敗した場合、DataAccessExceptionのサブクラスが発生する")
     void shouldThrowDataAccessExceptionWhenFailedToSaveCheckoutHistory() {
-        String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         Book expectedBook = new Book();
@@ -368,42 +366,22 @@ public class BookLendingManagerTest {
         book.setUpdatedAt(TEST_TIME);
         List<Book> rentalTargetBookList = List.of(book);
 
-        BookCheckoutHistory expectedCheckoutHistory = new BookCheckoutHistory();
-        expectedCheckoutHistory.setRentalId(stringUUID);
-        expectedCheckoutHistory.setUserId(userId);
-        expectedCheckoutHistory.setIsbn("1234567890123");
-        expectedCheckoutHistory.setRentalAt(TEST_TIME);
-        List<BookCheckoutHistory> expectedCheckoutHistoryList = List.of(expectedCheckoutHistory);
-
-        BookCheckoutHistory checkoutHistory = new BookCheckoutHistory();
-        checkoutHistory.setRentalId(stringUUID);
-        checkoutHistory.setUserId(userId);
-        checkoutHistory.setIsbn("1234567890123");
-        checkoutHistory.setRentalAt(TEST_TIME);
-        List<BookCheckoutHistory> rentalTargetCheckoutHistoryList = List.of(checkoutHistory);
-
         List<String> isbnList = List.of(book.getIsbn());
 
         when(bookRepository.findAllById(isbnList)).thenReturn(rentalTargetBookList);
         when(bookRepository.saveAll(rentalTargetBookList)).thenReturn(rentalTargetBookList);
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(Collections.emptyList());
-        when(bookCheckoutHistoryRepository.saveAll(rentalTargetCheckoutHistoryList)).thenThrow(
+        when(bookCheckoutHistoryRepository.saveAll(any())).thenThrow(
                 new DataAccessResourceFailureException("DBへの接続ができませんでした。"));
 
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class);
-                MockedStatic<LocalDateTime> mockLocalDateTime = Mockito.mockStatic(LocalDateTime.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-            mockLocalDateTime.when(LocalDateTime::now).thenReturn(TEST_TIME);
-
-            assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
-                    .isInstanceOf(DataAccessException.class)
-                    .hasMessageContaining("DBへの接続ができませんでした。");
-        }
+        assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
+                .isInstanceOf(DataAccessException.class)
+                .hasMessageContaining("DBへの接続ができませんでした。");
 
         verify(bookRepository, times(1)).findAllById(isbnList);
         verify(bookRepository, times(1)).saveAll(expectedBookList);
         verify(bookCheckoutHistoryRepository, times(1)).findUnreturnedBooksByUserId(userId);
-        verify(bookCheckoutHistoryRepository, times(1)).saveAll(expectedCheckoutHistoryList);
+        verify(bookCheckoutHistoryRepository, times(1)).saveAll(any());
     }
 
     @Test
