@@ -71,7 +71,7 @@
 
 .book-list-main {
     width: min(1190px, calc(100vw - 394px));
-    margin: 112px 64px 72px 330px;
+    margin: 64px 64px 72px 330px;
 }
 
 .page-heading {

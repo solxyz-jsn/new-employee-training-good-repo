@@ -41,6 +41,7 @@ public class UserManagementController {
         List<UserManagementModel> displayedUsers = userManagementService.getAllUsers();
 
         mav.addObject("users", displayedUsers);
+        mav.addObject("activeMenu", "userManagement");
         return mav;
     }
 }
