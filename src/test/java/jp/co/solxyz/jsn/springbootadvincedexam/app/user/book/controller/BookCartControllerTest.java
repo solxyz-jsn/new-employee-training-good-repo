@@ -91,6 +91,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks));
         verify(bookCartService, times(1)).getCartList(expectedCarts);
     }
@@ -117,6 +118,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks));
     }
 
@@ -129,6 +131,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", Collections.emptyList()));
 
         verify(bookCartService, times(1)).getCartList(Collections.emptyList());
@@ -151,6 +154,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("cartList"));
 
         verify(bookCartService, times(1)).checkout(expectedUserId, List.of(cart));
@@ -173,6 +177,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "処理中にエラーが発生しました。"));
 
         verify(bookCartService, times(1)).checkout(expectedUserId, List.of(cart));
@@ -205,6 +210,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。"));
 
@@ -250,6 +256,7 @@ class BookCartControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。"));
 

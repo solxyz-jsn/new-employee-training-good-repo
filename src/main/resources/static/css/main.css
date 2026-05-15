@@ -193,6 +193,8 @@ a.logo {
     z-index: 30;
     width: 280px;
     height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
     background: #ffffff;
     border-right: 1px solid #e8eef7;
     box-shadow: 18px 0 60px rgba(31, 61, 112, 0.05);
@@ -349,7 +351,7 @@ body > .container-group {
         margin-top: 20px;
     }
 
-    .app-menu-list {
+    .menu ul.app-menu-list {
         gap: 8px;
     }
 

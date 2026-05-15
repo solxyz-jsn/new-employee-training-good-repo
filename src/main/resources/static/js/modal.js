@@ -7,12 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById(modalId);
         modal.classList.add('is-open');
         modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
         modalOverlay.classList.add('is-open');
     }
 
     function modalClose(modal) {
         modal.classList.remove('is-open');
         modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
         modalOverlay.classList.remove('is-open');
     }
 

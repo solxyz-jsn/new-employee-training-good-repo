@@ -40,6 +40,7 @@ public class BookManagementControllerTest {
         ModelAndView actual = controller.index();
 
         assertThat(actual.getViewName()).isEqualTo("admin/book-management");
+        assertThat(actual.getModel().get("activeMenu")).isEqualTo("bookManagement");
         List<BookManagementModel> result = (List<BookManagementModel>) actual.getModel().get("books");
         assertThat(result).isEmpty();
     }
@@ -66,6 +67,7 @@ public class BookManagementControllerTest {
         ModelAndView actual = controller.index();
 
         assertThat(actual.getViewName()).isEqualTo("admin/book-management");
+        assertThat(actual.getModel().get("activeMenu")).isEqualTo("bookManagement");
         List<BookManagementModel> result = (List<BookManagementModel>) actual.getModel().get("books");
         assertThat(result).hasSize(1);
         assertThat(result.get(0)).isEqualTo(expected);
@@ -107,6 +109,7 @@ public class BookManagementControllerTest {
         ModelAndView actual = controller.index();
 
         assertThat(actual.getViewName()).isEqualTo("admin/book-management");
+        assertThat(actual.getModel().get("activeMenu")).isEqualTo("bookManagement");
         List<BookManagementModel> result = (List<BookManagementModel>) actual.getModel().get("books");
         assertThat(result).hasSize(2);
         assertThat(result.get(0)).isEqualTo(expected1);
@@ -133,6 +136,7 @@ public class BookManagementControllerTest {
 
         verify(service, times(1)).getAllBooks();
         assertThat(actual.getViewName()).isEqualTo("admin/book-management");
+        assertThat(actual.getModel().get("activeMenu")).isEqualTo("bookManagement");
         assertThat(actual.getModel().get("books")).isNull();
         assertThat(actual.getModel().get("error")).isEqualTo("書籍情報の生成に失敗しました。");
     }
