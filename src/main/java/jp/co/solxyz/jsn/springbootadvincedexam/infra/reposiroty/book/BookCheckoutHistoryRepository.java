@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -36,9 +37,11 @@ public interface BookCheckoutHistoryRepository extends JpaRepository<BookCheckou
      * ユーザIDとISBNにより返却日時を更新
      * @param userId ユーザID
      * @param isbn ISBN
+     * @param returnAt 返却日時
+     * @return 更新件数
      */
     @Transactional
     @Modifying
-    @Query("update BookCheckoutHistory e set e.returnAt = CURRENT_TIMESTAMP where e.userId = :userId and e.isbn = :isbn")
-    void updateReturnAt(@Param("userId") String userId, @Param("isbn") String isbn);
+    @Query("update BookCheckoutHistory e set e.returnAt = :returnAt where e.userId = :userId and e.isbn = :isbn and e.returnAt is null")
+    int updateReturnAt(@Param("userId") String userId, @Param("isbn") String isbn, @Param("returnAt") LocalDateTime returnAt);
 }

@@ -28,8 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -521,7 +520,7 @@ public class BookLendingManagerTest {
         book.setAvailableStock(1);
 
         when(bookRepository.findById(book.getIsbn())).thenReturn(Optional.of(book));
-        doNothing().when(bookCheckoutHistoryRepository).updateReturnAt(userId, book.getIsbn());
+        when(bookCheckoutHistoryRepository.updateReturnAt(eq(userId), eq(book.getIsbn()), any(LocalDateTime.class))).thenReturn(1);
 
         try {
             bookLendingManager.returnBook(userId, book.getIsbn());
@@ -531,7 +530,7 @@ public class BookLendingManagerTest {
         }
 
         verify(bookRepository, times(1)).save(expectedBook);
-        verify(bookCheckoutHistoryRepository, times(1)).updateReturnAt(userId, expectedBook.getIsbn());
+        verify(bookCheckoutHistoryRepository, times(1)).updateReturnAt(eq(userId), eq(expectedBook.getIsbn()), any(LocalDateTime.class));
     }
 
     @Test
@@ -547,7 +546,26 @@ public class BookLendingManagerTest {
                 .isInstanceOf(NoSuchElementException.class);
         verify(bookRepository, times(1)).findById(expectedIsbn);
         verify(bookRepository, never()).save(any());
-        verify(bookCheckoutHistoryRepository, never()).updateReturnAt(any(), any());
+        verify(bookCheckoutHistoryRepository, never()).updateReturnAt(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("返却対象の貸し出し履歴が存在しない場合、NoSuchElementExceptionが発生する")
+    void shouldThrowNoSuchElementExceptionWhenReturnBookWithoutActiveCheckoutHistory() {
+        String userId = "userId";
+
+        Book book = new Book();
+        book.setIsbn("1234567890123");
+        book.setAvailableStock(1);
+
+        when(bookRepository.findById(book.getIsbn())).thenReturn(Optional.of(book));
+        when(bookCheckoutHistoryRepository.updateReturnAt(eq(userId), eq(book.getIsbn()), any(LocalDateTime.class))).thenReturn(0);
+
+        assertThatThrownBy(() -> bookLendingManager.returnBook(userId, book.getIsbn()))
+                .isInstanceOf(NoSuchElementException.class);
+        verify(bookRepository, times(1)).findById(book.getIsbn());
+        verify(bookCheckoutHistoryRepository, times(1)).updateReturnAt(eq(userId), eq(book.getIsbn()), any(LocalDateTime.class));
+        verify(bookRepository, never()).save(any());
     }
 
     @Test
@@ -555,22 +573,18 @@ public class BookLendingManagerTest {
     void shouldThrowDataAccessExceptionWhenFailedToUpdateCheckoutHistory() {
         String userId = "userId";
 
-        Book expectedBook = new Book();
-        expectedBook.setIsbn("1234567890123");
-        expectedBook.setAvailableStock(1);
-
         Book book = new Book();
         book.setIsbn("1234567890123");
         book.setAvailableStock(1);
 
         when(bookRepository.findById(book.getIsbn())).thenReturn(Optional.of(book));
-        when(bookRepository.save(any(Book.class))).thenReturn(book);
-        doThrow(new DataAccessResourceFailureException("DBへの接続ができませんでした。")).when(bookCheckoutHistoryRepository).updateReturnAt(userId, book.getIsbn());
+        when(bookCheckoutHistoryRepository.updateReturnAt(eq(userId), eq(book.getIsbn()), any(LocalDateTime.class)))
+                .thenThrow(new DataAccessResourceFailureException("DBへの接続ができませんでした。"));
 
         assertThatThrownBy(() -> bookLendingManager.returnBook(userId, book.getIsbn()))
                 .isInstanceOf(DataAccessException.class);
-        verify(bookRepository, times(1)).findById(expectedBook.getIsbn());
-        verify(bookRepository, times(1)).save(book);
-        verify(bookCheckoutHistoryRepository, times(1)).updateReturnAt(userId, expectedBook.getIsbn());
+        verify(bookRepository, times(1)).findById(book.getIsbn());
+        verify(bookCheckoutHistoryRepository, times(1)).updateReturnAt(eq(userId), eq(book.getIsbn()), any(LocalDateTime.class));
+        verify(bookRepository, never()).save(any());
     }
 }
