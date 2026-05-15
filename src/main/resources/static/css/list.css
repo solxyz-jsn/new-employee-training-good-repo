@@ -133,8 +133,7 @@
     transition: background-color 160ms ease, transform 160ms ease;
 }
 
-.book-list-screen .book-row:hover,
-.book-list-screen .book-row:focus-visible {
+.book-list-screen .book-row:hover {
     background: #f8fbff;
     outline: none;
 }

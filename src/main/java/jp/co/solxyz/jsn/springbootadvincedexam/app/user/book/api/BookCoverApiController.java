@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 書影取得APIコントローラ
@@ -19,6 +20,16 @@ import java.util.Map;
 @RequestMapping("/api/book/covers")
 @Slf4j
 public class BookCoverApiController {
+
+    /**
+     * 一度に取得できるISBN数
+     */
+    private static final int MAX_ISBN_COUNT = 20;
+
+    /**
+     * ISBN形式
+     */
+    private static final Pattern ISBN_PATTERN = Pattern.compile("^\\d{13}$");
 
     /**
      * 書影取得サービス
@@ -40,16 +51,18 @@ public class BookCoverApiController {
      */
     @GetMapping
     public ResponseEntity<Map<String, String>> getCoverUrls(@RequestParam("isbn") String isbn) {
-        List<String> isbnList = Arrays.stream(isbn.split(","))
+        List<String> requestedIsbns = Arrays.stream(isbn.split(","))
                 .map(String::trim)
                 .filter(value -> !value.isBlank())
-                .distinct()
                 .toList();
-        if (isbnList.isEmpty()) {
-            log.info("ISBN is empty");
+        if (requestedIsbns.isEmpty()
+                || requestedIsbns.size() > MAX_ISBN_COUNT
+                || requestedIsbns.stream().anyMatch(value -> !ISBN_PATTERN.matcher(value).matches())) {
+            log.info("ISBN is invalid");
             return ResponseEntity.badRequest().build();
         }
 
+        List<String> isbnList = requestedIsbns.stream().distinct().toList();
         return ResponseEntity.ok(bookCoverService.getCoverUrls(isbnList));
     }
 }

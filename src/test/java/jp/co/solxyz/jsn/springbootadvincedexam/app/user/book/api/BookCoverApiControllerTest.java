@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
@@ -53,6 +55,41 @@ class BookCoverApiControllerTest {
     @DisplayName("ISBNが空の場合、BadRequestが返される")
     void shouldReturnBadRequestWhenIsbnIsEmpty() {
         ResponseEntity<Map<String, String>> response = bookCoverApiController.getCoverUrls(" , ");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verifyNoInteractions(bookCoverService);
+    }
+
+    @Test
+    @DisplayName("ISBNの形式が不正な場合、BadRequestが返される")
+    void shouldReturnBadRequestWhenIsbnFormatIsInvalid() {
+        ResponseEntity<Map<String, String>> response = bookCoverApiController.getCoverUrls("9784873117904, invalid");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verifyNoInteractions(bookCoverService);
+    }
+
+    @Test
+    @DisplayName("ISBNが上限件数を超える場合、BadRequestが返される")
+    void shouldReturnBadRequestWhenIsbnCountExceedsLimit() {
+        String isbns = IntStream.range(0, 21)
+                .mapToObj(index -> String.format("978487311%04d", index))
+                .collect(Collectors.joining(","));
+
+        ResponseEntity<Map<String, String>> response = bookCoverApiController.getCoverUrls(isbns);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+        verifyNoInteractions(bookCoverService);
+    }
+
+    @Test
+    @DisplayName("重複を含むISBN指定でも上限件数を超える場合、BadRequestが返される")
+    void shouldReturnBadRequestWhenRawIsbnCountExceedsLimit() {
+        String isbns = IntStream.range(0, 21)
+                .mapToObj(index -> "9784873117904")
+                .collect(Collectors.joining(","));
+
+        ResponseEntity<Map<String, String>> response = bookCoverApiController.getCoverUrls(isbns);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         verifyNoInteractions(bookCoverService);

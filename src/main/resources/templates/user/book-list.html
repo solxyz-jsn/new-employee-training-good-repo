@@ -20,7 +20,6 @@
         const csrfToken = document.querySelector('meta[name="_csrf"]').content;
         const csrfHeader = document.querySelector('meta[name="_csrf_header"]').content;
         const openBdBatchSize = 20;
-        const fallbackCoverUrl = (isbn) => `https://cover.openbd.jp/${isbn}.jpg`;
 
         function setText(id, value) {
             const element = document.getElementById(id);
@@ -29,19 +28,27 @@
             }
         }
 
+        function showCoverPlaceholder(img) {
+            const frame = img.closest('.book-cover-frame, .detail-cover-frame');
+            img.hidden = true;
+            img.removeAttribute('src');
+            img.removeAttribute('alt');
+            frame?.classList.remove('has-cover');
+        }
+
         function applyCoverImage(img, book) {
             if (!img || !book) {
                 return;
             }
+            if (!book.coverUrl) {
+                showCoverPlaceholder(img);
+                return;
+            }
             const frame = img.closest('.book-cover-frame, .detail-cover-frame');
-            img.onerror = () => {
-                img.hidden = true;
-                img.removeAttribute('src');
-                frame?.classList.remove('has-cover');
-            };
+            img.onerror = () => showCoverPlaceholder(img);
             img.hidden = false;
             frame?.classList.add('has-cover');
-            img.src = book.coverUrl || fallbackCoverUrl(book.isbn);
+            img.src = book.coverUrl;
             img.alt = `${book.title} の書影`;
         }
 
@@ -70,24 +77,22 @@
                         if (!book) {
                             return;
                         }
-                        book.coverUrl = coverUrls[isbn] || fallbackCoverUrl(book.isbn);
+                        if (coverUrls[isbn]) {
+                            book.coverUrl = coverUrls[isbn];
+                        } else {
+                            delete book.coverUrl;
+                        }
                     });
                 } catch (error) {
                     batch.forEach(isbn => {
                         const book = bookByIsbn.get(isbn);
                         if (book) {
-                            book.coverUrl = fallbackCoverUrl(book.isbn);
+                            delete book.coverUrl;
                         }
                     });
                     console.warn('openBDから書影を取得できませんでした。', error);
                 }
             }
-
-            books.forEach(book => {
-                if (!book.coverUrl) {
-                    book.coverUrl = fallbackCoverUrl(book.isbn);
-                }
-            });
 
             document.querySelectorAll('[data-cover-isbn]').forEach(img => {
                 const book = bookByIsbn.get(img.getAttribute('data-cover-isbn'));

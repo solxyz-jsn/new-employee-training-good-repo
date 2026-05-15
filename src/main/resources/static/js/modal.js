@@ -2,20 +2,35 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('modal-overlay');
+    let modalTrigger = null;
 
-    function modalOpen(modalId) {
+    function focusFirstDialogElement(modal) {
+        const focusTarget = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') || modal;
+        focusTarget.focus({preventScroll: true});
+    }
+
+    function modalOpen(modalId, trigger) {
         const modal = document.getElementById(modalId);
+        if (!modal) {
+            return;
+        }
+        modalTrigger = trigger;
         modal.classList.add('is-open');
         modal.classList.remove('hidden');
         modal.setAttribute('aria-hidden', 'false');
-        modalOverlay.classList.add('is-open');
+        modalOverlay?.classList.add('is-open');
+        focusFirstDialogElement(modal);
     }
 
     function modalClose(modal) {
         modal.classList.remove('is-open');
         modal.classList.add('hidden');
         modal.setAttribute('aria-hidden', 'true');
-        modalOverlay.classList.remove('is-open');
+        modalOverlay?.classList.remove('is-open');
+        if (modalTrigger && document.contains(modalTrigger)) {
+            modalTrigger.focus({preventScroll: true});
+        }
+        modalTrigger = null;
     }
 
     const modalTriggers = document.querySelectorAll('[data-modal-target]');
@@ -24,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalTriggers.forEach(trigger => {
         trigger.addEventListener('click', () => {
             const modalId = trigger.getAttribute('data-modal-target');
-            modalOpen(modalId);
+            modalOpen(modalId, trigger);
         });
     });
 
