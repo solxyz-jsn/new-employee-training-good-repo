@@ -39,7 +39,7 @@ public class BookCartApiController {
      * @return レスポンス
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> add(@RequestBody CartIsbn cartIsbn) {
+    public ResponseEntity<Integer> add(@RequestBody CartIsbn cartIsbn) {
         if (cartIsbn.getIsbn() == null) {
             log.info("ISBN is null");
             return ResponseEntity.badRequest().build();
@@ -48,7 +48,7 @@ public class BookCartApiController {
         Cart cart = new Cart();
         cart.setIsbn(cartIsbn.getIsbn());
         cartSession.addCart(cart);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(cartSession.getCartList().size());
     }
 
     /**
