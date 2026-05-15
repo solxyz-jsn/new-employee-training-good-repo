@@ -8,6 +8,7 @@ import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookReposit
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -340,6 +342,8 @@ public class BookLendingManagerTest {
     @Test
     @DisplayName("チェックアウト履歴の登録に失敗した場合、DataAccessExceptionのサブクラスが発生する")
     void shouldThrowDataAccessExceptionWhenFailedToSaveCheckoutHistory() {
+        String stringUUID = "00000000-0000-0000-0000-000000000000";
+        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         Book expectedBook = new Book();
@@ -366,22 +370,55 @@ public class BookLendingManagerTest {
         book.setUpdatedAt(TEST_TIME);
         List<Book> rentalTargetBookList = List.of(book);
 
+        BookCheckoutHistory expectedCheckoutHistory = new BookCheckoutHistory();
+        expectedCheckoutHistory.setRentalId(stringUUID);
+        expectedCheckoutHistory.setUserId(userId);
+        expectedCheckoutHistory.setIsbn(book.getIsbn());
+
         List<String> isbnList = List.of(book.getIsbn());
 
         when(bookRepository.findAllById(isbnList)).thenReturn(rentalTargetBookList);
         when(bookRepository.saveAll(rentalTargetBookList)).thenReturn(rentalTargetBookList);
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(Collections.emptyList());
-        when(bookCheckoutHistoryRepository.saveAll(any())).thenThrow(
+        when(bookCheckoutHistoryRepository.saveAll(argThat((List<BookCheckoutHistory> histories) -> {
+            if (histories.size() != 1) {
+                return false;
+            }
+            BookCheckoutHistory history = histories.get(0);
+            return stringUUID.equals(history.getRentalId())
+                    && userId.equals(history.getUserId())
+                    && book.getIsbn().equals(history.getIsbn())
+                    && history.getRentalAt() != null;
+        }))).thenThrow(
                 new DataAccessResourceFailureException("DBへの接続ができませんでした。"));
 
-        assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
-                .isInstanceOf(DataAccessException.class)
-                .hasMessageContaining("DBへの接続ができませんでした。");
+        LocalDateTime beforeCheckout = LocalDateTime.now();
+        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class)) {
+            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
+
+            assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
+                    .isInstanceOf(DataAccessException.class)
+                    .hasMessageContaining("DBへの接続ができませんでした。");
+        }
+        LocalDateTime afterCheckout = LocalDateTime.now();
 
         verify(bookRepository, times(1)).findAllById(isbnList);
         verify(bookRepository, times(1)).saveAll(expectedBookList);
         verify(bookCheckoutHistoryRepository, times(1)).findUnreturnedBooksByUserId(userId);
-        verify(bookCheckoutHistoryRepository, times(1)).saveAll(any());
+
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        ArgumentCaptor<List<BookCheckoutHistory>> checkoutHistoriesCaptor =
+                ArgumentCaptor.forClass((Class) List.class);
+        verify(bookCheckoutHistoryRepository, times(1)).saveAll(checkoutHistoriesCaptor.capture());
+
+        List<BookCheckoutHistory> savedCheckoutHistories = checkoutHistoriesCaptor.getValue();
+        assertThat(savedCheckoutHistories).hasSize(1);
+        BookCheckoutHistory savedCheckoutHistory = savedCheckoutHistories.get(0);
+        assertThat(savedCheckoutHistory)
+                .usingRecursiveComparison()
+                .ignoringFields("rentalAt")
+                .isEqualTo(expectedCheckoutHistory);
+        assertThat(savedCheckoutHistory.getRentalAt()).isBetween(beforeCheckout, afterCheckout);
     }
 
     @Test
