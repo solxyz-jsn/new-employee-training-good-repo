@@ -135,7 +135,10 @@ public class BookLendingManager {
     @Transactional(rollbackFor = Exception.class)
     public void returnBook(String userId, String isbn) throws NoSuchElementException, DataAccessException {
         try {
-            Book book = bookRepository.findById(isbn).orElseThrow();
+            Book book = bookRepository.findById(isbn).orElseThrow(() -> {
+                log.info("ISBNの一致する書籍が見つかりません。ISBN: {}", isbn);
+                return new NoSuchElementException("ISBNの一致する書籍が存在しません。");
+            });
             int updatedHistoryCount = bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now());
             if (updatedHistoryCount != 1) {
                 log.info("返却対象の貸し出し履歴が見つかりません。USER_ID: {}, ISBN: {}", userId, isbn);
@@ -144,9 +147,6 @@ public class BookLendingManager {
 
             book.setAvailableStock(book.getAvailableStock() + 1);
             bookRepository.save(book);
-        } catch (NoSuchElementException e) {
-            log.info("ISBNの一致する書籍が見つかりません。", e);
-            throw e;
         } catch (DataAccessException e) {
             log.error("貸し出し履歴の更新に失敗しました。", e);
             throw e;
