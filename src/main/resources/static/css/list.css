@@ -235,32 +235,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
-    color: #2f64e5;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(232, 240, 255, 0.88)),
-        #edf4ff;
-    font-weight: 900;
+    padding: 6px;
+    color: #333333;
+    background: #dcdcdc;
+    font-weight: 500;
     text-align: center;
-}
-
-.cover-placeholder::before {
-    position: absolute;
-    top: 9px;
-    left: 9px;
-    right: 9px;
-    height: 2px;
-    background: #2f64e5;
-    content: "";
-    opacity: 0.35;
 }
 
 .cover-placeholder-text {
     position: relative;
     max-width: 100%;
     overflow-wrap: anywhere;
-    font-size: 16px;
-    line-height: 1.2;
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0;
+    white-space: nowrap;
 }
 
 .book-cover-frame.has-cover .cover-placeholder,
@@ -456,7 +445,7 @@
 }
 
 .detail-cover-placeholder .cover-placeholder-text {
-    font-size: 34px;
+    font-size: 40px;
 }
 
 .book-detail-summary {

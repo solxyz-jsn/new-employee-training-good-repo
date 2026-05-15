@@ -32,11 +32,6 @@
                 return;
             }
             const frame = img.closest('.book-cover-frame, .detail-cover-frame');
-            const placeholder = frame?.querySelector('.cover-placeholder-text');
-            const coverLabel = (book.title || '書籍').replace(/\s/g, '').slice(0, 2);
-            if (placeholder) {
-                placeholder.textContent = coverLabel;
-            }
             img.onerror = () => {
                 img.hidden = true;
                 img.removeAttribute('src');
@@ -222,7 +217,7 @@
                         <span class="book-cover-frame">
                             <img class="book-cover" th:attr="data-cover-isbn=${book.isbn}" th:alt="${book.title + ' の書影'}" loading="lazy" hidden>
                             <span class="cover-placeholder" aria-hidden="true">
-                                <span class="cover-placeholder-text" th:text="${#strings.substring(book.title, 0, 2)}">書籍</span>
+                                <span class="cover-placeholder-text">NO IMAGE</span>
                             </span>
                         </span>
                         <span class="book-title-group">
@@ -268,7 +263,7 @@
                 <div class="detail-cover-frame">
                     <img id="modal-book-cover" class="detail-cover" alt="" hidden>
                     <span class="cover-placeholder detail-cover-placeholder" aria-hidden="true">
-                        <span class="cover-placeholder-text">書籍</span>
+                        <span class="cover-placeholder-text">NO IMAGE</span>
                     </span>
                 </div>
                 <div class="book-detail-summary">
