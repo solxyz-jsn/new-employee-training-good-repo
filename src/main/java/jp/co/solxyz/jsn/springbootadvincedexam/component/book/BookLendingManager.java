@@ -136,10 +136,14 @@ public class BookLendingManager {
     public void returnBook(String userId, String isbn) throws NoSuchElementException, DataAccessException {
         try {
             Book book = bookRepository.findById(isbn).orElseThrow();
+            int updatedHistoryCount = bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now());
+            if (updatedHistoryCount != 1) {
+                log.info("返却対象の貸し出し履歴が見つかりません。USER_ID: {}, ISBN: {}", userId, isbn);
+                throw new NoSuchElementException("返却対象の貸し出し履歴が存在しません。");
+            }
+
             book.setAvailableStock(book.getAvailableStock() + 1);
             bookRepository.save(book);
-
-            bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now());
         } catch (NoSuchElementException e) {
             log.info("ISBNの一致する書籍が見つかりません。", e);
             throw e;
