@@ -51,6 +51,7 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+    dependsOn 'setupDatabase'
 }
 
 // H2DBを作成し、初期データを挿入する

@@ -41,6 +41,6 @@ public interface BookCheckoutHistoryRepository extends JpaRepository<BookCheckou
      */
     @Transactional
     @Modifying
-    @Query("update BookCheckoutHistory e set e.returnAt = :returnAt where e.userId = :userId and e.isbn = :isbn")
+    @Query("update BookCheckoutHistory e set e.returnAt = :returnAt where e.userId = :userId and e.isbn = :isbn and e.returnAt is null")
     void updateReturnAt(@Param("userId") String userId, @Param("isbn") String isbn, @Param("returnAt") LocalDateTime returnAt);
 }
