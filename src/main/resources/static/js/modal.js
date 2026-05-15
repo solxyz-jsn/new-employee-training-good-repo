@@ -29,22 +29,27 @@ document.addEventListener('DOMContentLoaded', () => {
     modalClosers.forEach(closer => {
         closer.addEventListener('click', (event) => {
             event.stopPropagation();
-            if (event.target === closer) {
-                const modal = closer.closest('.modal');
-                if (modal) {
-                    modalClose(modal);
-                }
+            if (closer.classList.contains('modal-dialog') && event.target !== closer) {
+                return;
+            }
+
+            const modalId = closer.getAttribute('data-modal-hide');
+            const modal = modalId ? document.getElementById(modalId) : closer.closest('.modal');
+            if (modal) {
+                modalClose(modal);
             }
         });
     });
 
     const modalAria = document.getElementById('default-modal');
 
-    modalAria.addEventListener('click', (event) => {
-        const openedModal = document.querySelector('.modal.is-open');
-        const modal = document.querySelector('[data-modal-hide=default-modal]');
-        if (openedModal && !modal.contains(event.target)) {
-            modalClose(openedModal);
-        }
-    });
+    if (modalAria) {
+        modalAria.addEventListener('click', (event) => {
+            const openedModal = document.querySelector('.modal.is-open');
+            const modal = document.querySelector('[data-modal-hide=default-modal]');
+            if (openedModal && modal && !modal.contains(event.target)) {
+                modalClose(openedModal);
+            }
+        });
+    }
 });

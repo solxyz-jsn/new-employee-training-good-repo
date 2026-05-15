@@ -5,9 +5,14 @@
 <body>
 <div th:fragment="bar">
 
-    <nav>
-        <div class="container">
-            <a href="/book/list" class="logo">
+    <nav class="app-navigation">
+        <div class="container app-nav-container">
+            <a href="/book/list" class="logo app-logo" aria-label="書籍一覧へ">
+                <svg class="app-logo-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.75 5.5C4.75 4.12 5.87 3 7.25 3H10c1.1 0 2 .9 2 2v15.25C12 19.56 11.44 19 10.75 19h-3.5A2.5 2.5 0 0 1 4.75 16.5v-11Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M19.25 5.5C19.25 4.12 18.13 3 16.75 3H14c-1.1 0-2 .9-2 2v15.25c0-.69.56-1.25 1.25-1.25h3.5a2.5 2.5 0 0 0 2.5-2.5v-11Z" stroke="currentColor" stroke-width="1.8"/>
+                    <path d="M7.25 6.5h2.5M14.25 6.5h2.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
                 <span>書籍管理アプリ</span>
             </a>
             <button class="menu-toggle" data-collapse-toggle="navbar-default" type="button"
@@ -18,35 +23,86 @@
                           d="M1 1h15M1 7h15M1 13h15"/>
                 </svg>
             </button>
-            <div class="menu" id="navbar-default">
-                <ul>
+            <div class="menu app-sidebar-menu" id="navbar-default">
+                <ul class="app-menu-list">
                     <li>
-                        <a th:href="@{/book/return}">借りている書籍</a>
+                        <a class="app-menu-link" th:classappend="${activeMenu == 'bookList'} ? ' is-active'" th:href="@{/book/list}">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                <path d="M4.75 5.5C4.75 4.12 5.87 3 7.25 3H10c1.1 0 2 .9 2 2v15.25C12 19.56 11.44 19 10.75 19h-3.5A2.5 2.5 0 0 1 4.75 16.5v-11Z" stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M19.25 5.5C19.25 4.12 18.13 3 16.75 3H14c-1.1 0-2 .9-2 2v15.25c0-.69.56-1.25 1.25-1.25h3.5a2.5 2.5 0 0 0 2.5-2.5v-11Z" stroke="currentColor" stroke-width="1.8"/>
+                            </svg>
+                            <span>書籍一覧</span>
+                        </a>
                     </li>
                     <li>
-                        <a th:href="@{/book/cart}">カート</a>
+                        <a class="app-menu-link" th:classappend="${activeMenu == 'lending'} ? ' is-active'" th:href="@{/book/return}">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 6.75h10M7 11.75h10M7 16.75h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                <path d="M5.75 3.75h12.5A1.75 1.75 0 0 1 20 5.5v13a1.75 1.75 0 0 1-1.75 1.75H5.75A1.75 1.75 0 0 1 4 18.5v-13a1.75 1.75 0 0 1 1.75-1.75Z" stroke="currentColor" stroke-width="1.8"/>
+                            </svg>
+                            <span>借りている書籍</span>
+                        </a>
                     </li>
                     <li>
-                        <div class="dropdown">
-                            <label class="dropdown-button" th:text="${#authentication.name}"></label><span
-                                class="dropdown-arrow"> ▽</span>
-                            <div class="dropdown-content">
-                                <div sec:authorize="hasRole('ROLE_ADMIN')">
-                                    <a href="/admin/management/book">書籍管理</a>
-                                    <a href="/admin/management/user">ユーザ管理</a>
-                                </div>
-                                <form id="logout-form" action="/logout" method="post" style="display: none;">
-                                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-                                </form>
-                                <a href="#"
-                                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
-                            </div>
-                        </div>
+                        <a class="app-menu-link" th:classappend="${activeMenu == 'cart'} ? ' is-active'" th:href="@{/book/cart}">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                <path d="M4.5 5.25h2l1.6 9.2a2 2 0 0 0 1.97 1.65h6.75a2 2 0 0 0 1.95-1.56l1.02-4.54H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 20.25h.01M17 20.25h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                            </svg>
+                            <span>カート</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="app-menu-link" href="#">
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 12.25a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
+                                <path d="M4.75 20.25a7.25 7.25 0 0 1 14.5 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                            <span>プロフィール設定</span>
+                        </a>
                     </li>
                 </ul>
             </div>
+            <form id="logout-form" action="/logout" method="post" style="display: none;">
+                <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+            </form>
+            <a class="app-logout-link" href="#"
+               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M10 5.25H6.75A2.25 2.25 0 0 0 4.5 7.5v9a2.25 2.25 0 0 0 2.25 2.25H10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M14.25 8.25 18 12l-3.75 3.75M18 12H9.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>ログアウト</span>
+            </a>
         </div>
     </nav>
+    <header class="app-topbar">
+        <a class="topbar-cart-link" th:href="@{/book/cart}" aria-label="カートへ">
+            <span class="topbar-cart-icon">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                    <path d="M4.5 5.25h2l1.6 9.2a2 2 0 0 0 1.97 1.65h6.75a2 2 0 0 0 1.95-1.56l1.02-4.54H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 20.25h.01M17 20.25h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <span class="topbar-cart-badge" th:text="${@cartSession.getCartList().size()}">0</span>
+            </span>
+            <span>カート</span>
+        </a>
+        <div class="dropdown topbar-profile">
+            <button class="dropdown-button topbar-profile-button" type="button">
+                <span class="topbar-avatar" th:text="${#strings.substring(#authentication.name, 0, 1)}">T</span>
+                <span class="topbar-username" th:text="${#authentication.name}">テスト 太郎</span>
+                <span class="dropdown-arrow">⌄</span>
+            </button>
+            <div class="dropdown-content topbar-dropdown-content">
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <a href="/admin/management/book">書籍管理</a>
+                    <a href="/admin/management/user">ユーザ管理</a>
+                </div>
+                <a href="#"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">ログアウト</a>
+            </div>
+        </div>
+    </header>
 </div>
 </body>
 </html>

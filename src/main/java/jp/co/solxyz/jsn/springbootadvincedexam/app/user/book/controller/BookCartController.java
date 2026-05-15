@@ -53,6 +53,7 @@ public class BookCartController {
         ModelAndView mav = new ModelAndView("user/book-cart");
         List<CartBookModel> tableData = bookCartService.getCartList(cartSession.getCartList());
         mav.addObject("cartList", tableData);
+        mav.addObject("activeMenu", "cart");
         return mav;
     }
 
@@ -69,6 +70,7 @@ public class BookCartController {
         } catch (DataAccessException e) {
             ModelAndView mav = new ModelAndView("user/book-cart");
             mav.addObject("errorMessage", "処理中にエラーが発生しました。");
+            mav.addObject("activeMenu", "cart");
             return mav;
         }
 
@@ -79,6 +81,7 @@ public class BookCartController {
         cartSession.clearCart();
 
         ModelAndView mav = new ModelAndView("user/book-cart");
+        mav.addObject("activeMenu", "cart");
 
         if (!unCheckedOutBooks.isEmpty()) {
             mav.addObject("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。");
