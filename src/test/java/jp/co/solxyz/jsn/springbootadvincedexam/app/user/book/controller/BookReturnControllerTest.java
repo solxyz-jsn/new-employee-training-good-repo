@@ -84,6 +84,10 @@ class BookReturnControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 0L))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("displayBooks"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
@@ -127,6 +131,10 @@ class BookReturnControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 2))
+                .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 0L))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("displayBooks"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
@@ -146,6 +154,10 @@ class BookReturnControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 0))
+                .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 0L))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attribute("displayBooks", Collections.emptyList()))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", Collections.emptyList()));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
