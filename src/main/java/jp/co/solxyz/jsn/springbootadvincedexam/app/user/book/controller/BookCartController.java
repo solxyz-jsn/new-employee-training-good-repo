@@ -100,6 +100,11 @@ public class BookCartController {
         return mav;
     }
 
+    /**
+     * カート画面で共通して使用する表示属性を追加する
+     * @param mav モデルとビュー
+     * @param cartCount カート内の書籍数
+     */
     private void addCartPageAttributes(ModelAndView mav, int cartCount) {
         mav.addObject("activeMenu", "cart");
         mav.addObject("cartCount", cartCount);
@@ -107,6 +112,11 @@ public class BookCartController {
         mav.addObject("returnDueDateText", formatReturnDueDate(LocalDate.now().plusDays(RETURN_DUE_DAYS)));
     }
 
+    /**
+     * 返却期限日を画面表示用の形式に変換する
+     * @param returnDueDate 返却期限日
+     * @return 画面表示用の返却期限日
+     */
     private String formatReturnDueDate(LocalDate returnDueDate) {
         String dayOfWeek = returnDueDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.JAPANESE);
         return returnDueDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + " (" + dayOfWeek + ")";
