@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * カートコントローラ
@@ -24,6 +28,11 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/book/cart")
 public class BookCartController {
+
+    /**
+     * 返却期限までの日数
+     */
+    private static final int RETURN_DUE_DAYS = 14;
 
     /**
      * カートセッション
@@ -53,7 +62,7 @@ public class BookCartController {
         ModelAndView mav = new ModelAndView("user/book-cart");
         List<CartBookModel> tableData = bookCartService.getCartList(cartSession.getCartList());
         mav.addObject("cartList", tableData);
-        mav.addObject("activeMenu", "cart");
+        addCartPageAttributes(mav, tableData.size());
         return mav;
     }
 
@@ -70,7 +79,7 @@ public class BookCartController {
         } catch (DataAccessException e) {
             ModelAndView mav = new ModelAndView("user/book-cart");
             mav.addObject("errorMessage", "処理中にエラーが発生しました。");
-            mav.addObject("activeMenu", "cart");
+            addCartPageAttributes(mav, cartSession.getCartList().size());
             return mav;
         }
 
@@ -81,7 +90,7 @@ public class BookCartController {
         cartSession.clearCart();
 
         ModelAndView mav = new ModelAndView("user/book-cart");
-        mav.addObject("activeMenu", "cart");
+        addCartPageAttributes(mav, displayedUnCheckedOutBookModels.size());
 
         if (!unCheckedOutBooks.isEmpty()) {
             mav.addObject("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。");
@@ -89,6 +98,28 @@ public class BookCartController {
         }
 
         return mav;
+    }
+
+    /**
+     * カート画面で共通して使用する表示属性を追加する
+     * @param mav モデルとビュー
+     * @param cartCount カート内の書籍数
+     */
+    private void addCartPageAttributes(ModelAndView mav, int cartCount) {
+        mav.addObject("activeMenu", "cart");
+        mav.addObject("cartCount", cartCount);
+        mav.addObject("returnDueDays", RETURN_DUE_DAYS);
+        mav.addObject("returnDueDateText", formatReturnDueDate(LocalDate.now().plusDays(RETURN_DUE_DAYS)));
+    }
+
+    /**
+     * 返却期限日を画面表示用の形式に変換する
+     * @param returnDueDate 返却期限日
+     * @return 画面表示用の返却期限日
+     */
+    private String formatReturnDueDate(LocalDate returnDueDate) {
+        String dayOfWeek = returnDueDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.JAPANESE);
+        return returnDueDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + " (" + dayOfWeek + ")";
     }
 
 }
