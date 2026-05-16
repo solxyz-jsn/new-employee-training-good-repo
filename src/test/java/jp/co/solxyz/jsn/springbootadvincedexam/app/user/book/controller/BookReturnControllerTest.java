@@ -11,14 +11,19 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -62,12 +67,14 @@ class BookReturnControllerTest {
     @DisplayName("1件の借りている書籍がある時にindexが呼び出された場合、1件の書籍を含んだリストを返す")
     void shouldReturnBookListWhenIndexIsCalled() throws Exception {
         String expectedUserId = "user1";
+        LocalDateTime rentalAt = LocalDate.now().atTime(10, 30);
 
         UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
         unreturnedBook.setIsbn("isbn1");
         unreturnedBook.setTitle("title1");
         unreturnedBook.setAuthor("author1");
         unreturnedBook.setPublisher("publisher1");
+        unreturnedBook.setRentalAt(rentalAt);
         List<UnreturnedBookModel> unreturnedBooks = List.of(unreturnedBook);
 
         UnreturnedBookModel expectedUnreturnedBook = new UnreturnedBookModel();
@@ -75,11 +82,12 @@ class BookReturnControllerTest {
         expectedUnreturnedBook.setTitle("title1");
         expectedUnreturnedBook.setAuthor("author1");
         expectedUnreturnedBook.setPublisher("publisher1");
+        expectedUnreturnedBook.setRentalAt(rentalAt);
         List<UnreturnedBookModel> expectedUnreturnedBooks = List.of(expectedUnreturnedBook);
 
         when(bookLendingService.getCurrentUserBooks(any())).thenReturn(unreturnedBooks);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/book/return")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/book/return")
                         .with(user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
@@ -88,9 +96,97 @@ class BookReturnControllerTest {
                 .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 0L))
                 .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
                 .andExpect(MockMvcResultMatchers.model().attributeExists("displayBooks"))
-                .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks));
+                .andExpect(MockMvcResultMatchers.content().string(containsString("data-due-soon=\"false\"")))
+                .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<UnreturnedBookModel> displayBooks = (List<UnreturnedBookModel>) result.getModelAndView()
+                .getModel()
+                .get("displayBooks");
+        assertThat(displayBooks).hasSize(1);
+        UnreturnedBookModel displayBook = displayBooks.get(0);
+        assertThat(displayBook.getDueAt()).isEqualTo(rentalAt.plusDays(14));
+        assertThat(displayBook.getRemainingDays()).isEqualTo(14);
+        assertThat(displayBook.isDueSoon()).isFalse();
+        assertThat(displayBook.isOverdue()).isFalse();
+        assertThat(displayBook.getStatusLabel()).isEqualTo("貸出中");
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
+    }
+
+    @Test
+    @DisplayName("返却期限が近い書籍がある場合、返却期限が近い書籍数に含める")
+    void shouldCountDueSoonBooks() throws Exception {
+        String userId = "user1";
+        LocalDateTime rentalAt = LocalDate.now().minusDays(12).atTime(10, 30);
+
+        UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
+        unreturnedBook.setIsbn("isbn1");
+        unreturnedBook.setTitle("title1");
+        unreturnedBook.setAuthor("author1");
+        unreturnedBook.setPublisher("publisher1");
+        unreturnedBook.setRentalAt(rentalAt);
+
+        when(userDetails.getUserId()).thenReturn(userId);
+        when(bookLendingService.getCurrentUserBooks(userId)).thenReturn(List.of(unreturnedBook));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/book/return")
+                        .with(user(userDetails)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 1L))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("data-due-soon=\"true\"")))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<UnreturnedBookModel> displayBooks = (List<UnreturnedBookModel>) result.getModelAndView()
+                .getModel()
+                .get("displayBooks");
+        assertThat(displayBooks).hasSize(1);
+        UnreturnedBookModel displayBook = displayBooks.get(0);
+        assertThat(displayBook.getDueAt()).isEqualTo(rentalAt.plusDays(14));
+        assertThat(displayBook.getRemainingDays()).isEqualTo(2);
+        assertThat(displayBook.isDueSoon()).isTrue();
+        assertThat(displayBook.isOverdue()).isFalse();
+        assertThat(displayBook.getStatusLabel()).isEqualTo("返却間近");
+    }
+
+    @Test
+    @DisplayName("返却期限を過ぎた書籍がある場合、返却期限が近い書籍数には含めない")
+    void shouldExcludeOverdueBooksFromDueSoonCount() throws Exception {
+        String userId = "user1";
+        LocalDateTime rentalAt = LocalDate.now().minusDays(15).atTime(10, 30);
+
+        UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
+        unreturnedBook.setIsbn("isbn1");
+        unreturnedBook.setTitle("title1");
+        unreturnedBook.setAuthor("author1");
+        unreturnedBook.setPublisher("publisher1");
+        unreturnedBook.setRentalAt(rentalAt);
+
+        when(userDetails.getUserId()).thenReturn(userId);
+        when(bookLendingService.getCurrentUserBooks(userId)).thenReturn(List.of(unreturnedBook));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/book/return")
+                        .with(user(userDetails)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("dueSoonCount", 0L))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("data-due-soon=\"false\"")))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<UnreturnedBookModel> displayBooks = (List<UnreturnedBookModel>) result.getModelAndView()
+                .getModel()
+                .get("displayBooks");
+        assertThat(displayBooks).hasSize(1);
+        UnreturnedBookModel displayBook = displayBooks.get(0);
+        assertThat(displayBook.getDueAt()).isEqualTo(rentalAt.plusDays(14));
+        assertThat(displayBook.getRemainingDays()).isZero();
+        assertThat(displayBook.isDueSoon()).isFalse();
+        assertThat(displayBook.isOverdue()).isTrue();
+        assertThat(displayBook.getStatusLabel()).isEqualTo("期限超過");
     }
 
     @Test

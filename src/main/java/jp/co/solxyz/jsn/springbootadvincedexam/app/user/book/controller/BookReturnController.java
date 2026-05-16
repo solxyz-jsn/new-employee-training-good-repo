@@ -14,17 +14,14 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static jp.co.solxyz.jsn.springbootadvincedexam.app.user.book.constant.BookLendingPolicy.RETURN_DUE_DAYS;
+
 /**
  * 書籍返却コントローラ
  */
 @Controller
 @RequestMapping("/book/return")
 public class BookReturnController {
-    /**
-     * 返却期限までの日数
-     */
-    private static final int RETURN_DUE_DAYS = 14;
-
     /**
      * 返却期限が近いとみなす残日数
      */
@@ -69,7 +66,7 @@ public class BookReturnController {
      */
     private void addLendingPageAttributes(ModelAndView mav, List<UnreturnedBookModel> displayBooks) {
         long dueSoonCount = displayBooks.stream()
-                .filter(book -> book.isDueSoon() || book.isOverdue())
+                .filter(UnreturnedBookModel::isDueSoon)
                 .count();
 
         mav.addObject("activeMenu", "lending");

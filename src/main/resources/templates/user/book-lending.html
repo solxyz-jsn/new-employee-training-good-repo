@@ -71,7 +71,7 @@
         function updateLendingCounts() {
             const rows = Array.from(document.querySelectorAll('[data-lending-row]'));
             const bookCount = rows.length;
-            const dueSoonCount = rows.filter(row => row.getAttribute('data-due-alert') === 'true').length;
+            const dueSoonCount = rows.filter(row => row.getAttribute('data-due-soon') === 'true').length;
             const totalCount = document.getElementById('lending-total-count');
             const dueSoonTotal = document.getElementById('lending-due-soon-count');
             const emptyState = document.getElementById('lending-empty-state');
@@ -185,7 +185,7 @@
                 </thead>
                 <tbody>
                 <tr th:each="book : ${displayBooks}" class="table-row lending-row"
-                    th:attr="data-lending-row=${book.isbn}, data-due-alert=${book.dueSoon || book.overdue}">
+                    th:attr="data-lending-row=${book.isbn}, data-due-soon=${book.dueSoon}">
                     <th scope="row" class="table-cell font-medium lending-book-cell">
                         <span class="lending-cover-frame">
                             <img class="book-cover" th:attr="data-cover-isbn=${book.isbn}, data-cover-title=${book.title}" th:alt="${book.title + ' の書影'}" loading="lazy" hidden>

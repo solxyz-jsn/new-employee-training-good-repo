@@ -21,6 +21,8 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
+import static jp.co.solxyz.jsn.springbootadvincedexam.app.user.book.constant.BookLendingPolicy.RETURN_DUE_DAYS;
+
 /**
  * カートコントローラ
  */
@@ -28,11 +30,6 @@ import java.util.Locale;
 @Slf4j
 @RequestMapping("/book/cart")
 public class BookCartController {
-
-    /**
-     * 返却期限までの日数
-     */
-    private static final int RETURN_DUE_DAYS = 14;
 
     /**
      * カートセッション
