@@ -92,6 +92,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks));
         verify(bookCartService, times(1)).getCartList(expectedCarts);
     }
@@ -119,6 +122,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 2))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks));
     }
 
@@ -132,6 +138,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 0))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", Collections.emptyList()));
 
         verify(bookCartService, times(1)).getCartList(Collections.emptyList());
@@ -155,6 +164,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 0))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("cartList"));
 
         verify(bookCartService, times(1)).checkout(expectedUserId, List.of(cart));
@@ -178,6 +190,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "処理中にエラーが発生しました。"));
 
         verify(bookCartService, times(1)).checkout(expectedUserId, List.of(cart));
@@ -211,6 +226,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。"));
 
@@ -257,6 +275,9 @@ class BookCartControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
                 .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 2))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
                 .andExpect(MockMvcResultMatchers.model().attribute("cartList", expectedCartBooks))
                 .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "以下の書籍は既に借りている 又は 在庫が不足しているため借りることができません。"));
 
