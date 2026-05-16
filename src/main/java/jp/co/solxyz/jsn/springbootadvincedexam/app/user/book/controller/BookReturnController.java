@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -31,13 +32,19 @@ public class BookReturnController {
      * 書籍返却サービス
      */
     private final BookLendingService bookReturnService;
+    /**
+     * 現在日時取得用Clock
+     */
+    private final Clock clock;
 
     /**
      * コンストラクタ
      * @param bookReturnService 書籍返却サービス
+     * @param clock 現在日時取得用Clock
      */
-    public BookReturnController(BookLendingService bookReturnService) {
+    public BookReturnController(BookLendingService bookReturnService, Clock clock) {
         this.bookReturnService = bookReturnService;
+        this.clock = clock;
     }
 
     /**
@@ -122,7 +129,7 @@ public class BookReturnController {
         if (dueAt == null) {
             return 0;
         }
-        return ChronoUnit.DAYS.between(LocalDate.now(), dueAt.toLocalDate());
+        return ChronoUnit.DAYS.between(LocalDate.now(clock), dueAt.toLocalDate());
     }
 
     /**

@@ -17,13 +17,15 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsString;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -34,17 +36,47 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 
 @SpringBootTest
 class BookReturnControllerTest {
+    /**
+     * テストで使用する固定の現在日
+     */
+    private static final LocalDate TODAY = LocalDate.of(2026, 5, 17);
 
+    /**
+     * テストで使用する固定のタイムゾーン
+     */
+    private static final ZoneId TEST_ZONE = ZoneId.of("Asia/Tokyo");
+
+    /**
+     * 書籍貸出サービス
+     */
     @MockitoBean
     private BookLendingService bookLendingService;
 
+    /**
+     * 現在日時取得用Clock
+     */
+    @MockitoBean
+    private Clock clock;
+
+    /**
+     * ログインユーザ情報
+     */
     @Mock
     private MyUserDetails userDetails;
 
+    /**
+     * Webアプリケーションコンテキスト
+     */
     private final WebApplicationContext context;
 
+    /**
+     * Spring MVCテスト用モック
+     */
     private MockMvc mockMvc;
 
+    /**
+     * テスト用ユーザID
+     */
     private final String USER_ID = "user1";
 
     BookReturnControllerTest(WebApplicationContext context) {
@@ -61,13 +93,15 @@ class BookReturnControllerTest {
                 .build();
 
         when(userDetails.getUserId()).thenReturn(USER_ID);
+        when(clock.instant()).thenReturn(TODAY.atStartOfDay(TEST_ZONE).toInstant());
+        when(clock.getZone()).thenReturn(TEST_ZONE);
     }
 
     @Test
     @DisplayName("1件の借りている書籍がある時にindexが呼び出された場合、1件の書籍を含んだリストを返す")
     void shouldReturnBookListWhenIndexIsCalled() throws Exception {
         String expectedUserId = "user1";
-        LocalDateTime rentalAt = LocalDate.now().atTime(10, 30);
+        LocalDateTime rentalAt = TODAY.atTime(10, 30);
 
         UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
         unreturnedBook.setIsbn("isbn1");
@@ -119,7 +153,7 @@ class BookReturnControllerTest {
     @DisplayName("返却期限が近い書籍がある場合、返却期限が近い書籍数に含める")
     void shouldCountDueSoonBooks() throws Exception {
         String userId = "user1";
-        LocalDateTime rentalAt = LocalDate.now().minusDays(12).atTime(10, 30);
+        LocalDateTime rentalAt = TODAY.minusDays(12).atTime(10, 30);
 
         UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
         unreturnedBook.setIsbn("isbn1");
@@ -156,7 +190,7 @@ class BookReturnControllerTest {
     @DisplayName("返却期限を過ぎた書籍がある場合、返却期限が近い書籍数には含めない")
     void shouldExcludeOverdueBooksFromDueSoonCount() throws Exception {
         String userId = "user1";
-        LocalDateTime rentalAt = LocalDate.now().minusDays(15).atTime(10, 30);
+        LocalDateTime rentalAt = TODAY.minusDays(15).atTime(10, 30);
 
         UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
         unreturnedBook.setIsbn("isbn1");
