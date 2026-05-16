@@ -12,11 +12,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class BookCartApiControllerTest {
 
@@ -40,10 +43,13 @@ class BookCartApiControllerTest {
         Cart cart = new Cart();
         cart.setIsbn(cartIsbn.getIsbn());
 
-        ResponseEntity<Void> response = bookCartApiController.add(cartIsbn);
+        when(cartSession.getCartList()).thenReturn(List.of(cart));
+
+        ResponseEntity<Integer> response = bookCartApiController.add(cartIsbn);
 
         verify(cartSession, times(1)).addCart(cart);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualTo(1);
     }
 
     @Test
@@ -55,7 +61,7 @@ class BookCartApiControllerTest {
         Cart cart = new Cart();
         cart.setIsbn(cartIsbn.getIsbn());
 
-        ResponseEntity<Void> response = bookCartApiController.add(cartIsbn);
+        ResponseEntity<Integer> response = bookCartApiController.add(cartIsbn);
 
         verify(cartSession, never()).addCart(cart);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

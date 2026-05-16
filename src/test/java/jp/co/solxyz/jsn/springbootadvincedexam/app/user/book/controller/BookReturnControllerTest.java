@@ -83,6 +83,7 @@ class BookReturnControllerTest {
                         .with(user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
@@ -125,6 +126,7 @@ class BookReturnControllerTest {
                         .with(user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedUnreturnedBooks));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);
@@ -143,6 +145,7 @@ class BookReturnControllerTest {
                         .with(user(userDetails)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-lending"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "lending"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", Collections.emptyList()));
 
         verify(bookLendingService, times(1)).getCurrentUserBooks(expectedUserId);

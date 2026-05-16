@@ -34,7 +34,7 @@ input:focus, textarea:focus {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    width: 95vw;
+    width: 100%;
 }
 
 .book-form {

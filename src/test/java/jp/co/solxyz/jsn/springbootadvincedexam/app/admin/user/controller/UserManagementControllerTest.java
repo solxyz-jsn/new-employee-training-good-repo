@@ -41,6 +41,7 @@ class UserManagementControllerTest {
         ModelAndView mav = controller.index();
 
         assertThat(mav.getViewName()).isEqualTo("admin/user-management");
+        assertThat(mav.getModel().get("activeMenu")).isEqualTo("userManagement");
         assertThat(mav.getModel().get("users")).isEqualTo(users);
     }
 
@@ -52,6 +53,7 @@ class UserManagementControllerTest {
         ModelAndView mav = controller.index();
 
         assertThat(mav.getViewName()).isEqualTo("admin/user-management");
+        assertThat(mav.getModel().get("activeMenu")).isEqualTo("userManagement");
         assertThat(((List) mav.getModel().get("users"))).isEqualTo(Collections.emptyList());
     }
 }

@@ -58,6 +58,8 @@ public class BookListController {
                         book.getDescription())).toList();
         mav.addObject("books", displayedBookModels);
         mav.addObject("booksJson", mapper.writeValueAsString(displayedBookModels));
+        mav.addObject("bookCount", displayedBookModels.size());
+        mav.addObject("activeMenu", "bookList");
 
         return mav;
     }

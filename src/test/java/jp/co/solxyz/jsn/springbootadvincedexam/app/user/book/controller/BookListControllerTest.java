@@ -91,7 +91,9 @@ class BookListControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-list"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedList))
-                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", bookJson));
+                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", bookJson))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "bookList"));
 
         verify(bookListService, times(1)).getAllBooks();
     }
@@ -146,7 +148,9 @@ class BookListControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-list"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", expectedList))
-                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", bookJson));
+                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", bookJson))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 2))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "bookList"));
 
         verify(bookListService, times(1)).getAllBooks();
     }
@@ -167,7 +171,9 @@ class BookListControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("user/book-list"))
                 .andExpect(MockMvcResultMatchers.model().attribute("books", equalTo(Collections.emptyList())))
-                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", equalTo(bookJson)));
+                .andExpect(MockMvcResultMatchers.model().attribute("booksJson", equalTo(bookJson)))
+                .andExpect(MockMvcResultMatchers.model().attribute("bookCount", 0))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "bookList"));
 
         verify(bookListService, times(1)).getAllBooks();
     }

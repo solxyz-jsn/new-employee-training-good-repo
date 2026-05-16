@@ -41,6 +41,7 @@ public class BookReturnController {
         List<UnreturnedBookModel> unreturnedBooks = bookReturnService.getCurrentUserBooks(userDetails.getUserId());
 
         mav.addObject("books", unreturnedBooks);
+        mav.addObject("activeMenu", "lending");
         return mav;
     }
 }

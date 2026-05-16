@@ -42,6 +42,7 @@ public class BookManagementController {
     @GetMapping
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("admin/book-management");
+        mav.addObject("activeMenu", "bookManagement");
         List<Book> books = bookManagementService.getAllBooks();
         List<BookManagementModel> displayedBookModels = new ArrayList<>();
         try {
