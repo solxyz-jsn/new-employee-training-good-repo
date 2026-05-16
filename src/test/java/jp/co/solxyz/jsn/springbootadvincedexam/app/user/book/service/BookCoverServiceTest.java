@@ -28,6 +28,10 @@ class BookCoverServiceTest {
 
     private static final String COVER_URL = "https://cover.openbd.jp/9784873117904.jpg";
 
+    private static final String OTHER_ISBN = "9784873119380";
+
+    private static final String OTHER_COVER_URL = "https://cover.openbd.jp/9784873119380.jpg";
+
     @Mock
     private HttpClient httpClient;
 
@@ -51,6 +55,43 @@ class BookCoverServiceTest {
         assertThat(actual).containsExactly(Map.entry(ISBN, COVER_URL));
         assertThat(cached).containsExactly(Map.entry(ISBN, COVER_URL));
         verify(httpClient, times(1)).send(any(HttpRequest.class), anyBodyHandler());
+    }
+
+    @Test
+    @DisplayName("キャッシュ上限を超える場合、古いISBNが削除される")
+    void shouldEvictOldestCoverWhenCacheLimitIsExceeded() throws Exception {
+        bookCoverService = new BookCoverService(httpClient, JsonMapper.builder().build(), 1);
+        HttpResponse<String> firstResponse = response(200, "[{\"summary\":{\"cover\":\"" + COVER_URL + "\"}}]");
+        HttpResponse<String> secondResponse = response(200, "[{\"summary\":{\"cover\":\"" + OTHER_COVER_URL + "\"}}]");
+        HttpResponse<String> reloadedFirstResponse = response(200, "[{\"summary\":{\"cover\":\"" + COVER_URL + "\"}}]");
+        when(httpClient.send(any(HttpRequest.class), anyBodyHandler()))
+                .thenReturn(firstResponse, secondResponse, reloadedFirstResponse);
+
+        Map<String, String> first = bookCoverService.getCoverUrls(List.of(ISBN));
+        Map<String, String> second = bookCoverService.getCoverUrls(List.of(OTHER_ISBN));
+        Map<String, String> reloadedFirst = bookCoverService.getCoverUrls(List.of(ISBN));
+
+        assertThat(first).containsExactly(Map.entry(ISBN, COVER_URL));
+        assertThat(second).containsExactly(Map.entry(OTHER_ISBN, OTHER_COVER_URL));
+        assertThat(reloadedFirst).containsExactly(Map.entry(ISBN, COVER_URL));
+        verify(httpClient, times(3)).send(any(HttpRequest.class), anyBodyHandler());
+    }
+
+    @Test
+    @DisplayName("キャッシュ済みISBNと未取得ISBNを同時に指定しても、キャッシュ済みの書影を返す")
+    void shouldReturnCachedCoverWhenRequestMixesCachedAndMissingIsbn() throws Exception {
+        bookCoverService = new BookCoverService(httpClient, JsonMapper.builder().build(), 1);
+        HttpResponse<String> firstResponse = response(200, "[{\"summary\":{\"cover\":\"" + COVER_URL + "\"}}]");
+        HttpResponse<String> secondResponse = response(200, "[{\"summary\":{\"cover\":\"" + OTHER_COVER_URL + "\"}}]");
+        when(httpClient.send(any(HttpRequest.class), anyBodyHandler())).thenReturn(firstResponse, secondResponse);
+
+        bookCoverService.getCoverUrls(List.of(ISBN));
+        Map<String, String> mixed = bookCoverService.getCoverUrls(List.of(ISBN, OTHER_ISBN));
+
+        assertThat(mixed).containsExactly(
+                Map.entry(ISBN, COVER_URL),
+                Map.entry(OTHER_ISBN, OTHER_COVER_URL));
+        verify(httpClient, times(2)).send(any(HttpRequest.class), anyBodyHandler());
     }
 
     @Test

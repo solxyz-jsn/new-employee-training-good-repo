@@ -14,11 +14,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * 書影取得サービス
@@ -38,6 +37,11 @@ public class BookCoverService {
     private static final String MISSING_COVER = "";
 
     /**
+     * キャッシュできるISBN数
+     */
+    private static final int MAX_CACHE_SIZE = 500;
+
+    /**
      * HTTPクライアント
      */
     private final HttpClient httpClient;
@@ -50,7 +54,7 @@ public class BookCoverService {
     /**
      * ISBNごとの書影URLキャッシュ
      */
-    private final ConcurrentMap<String, String> coverCache = new ConcurrentHashMap<>();
+    private final Map<String, String> coverCache;
 
     /**
      * コンストラクタ
@@ -58,12 +62,17 @@ public class BookCoverService {
      */
     @Autowired
     public BookCoverService(JsonMapper jsonMapper) {
-        this(HttpClient.newHttpClient(), jsonMapper);
+        this(HttpClient.newHttpClient(), jsonMapper, MAX_CACHE_SIZE);
     }
 
     BookCoverService(HttpClient httpClient, JsonMapper jsonMapper) {
+        this(httpClient, jsonMapper, MAX_CACHE_SIZE);
+    }
+
+    BookCoverService(HttpClient httpClient, JsonMapper jsonMapper, int maxCacheSize) {
         this.httpClient = httpClient;
         this.jsonMapper = jsonMapper;
+        this.coverCache = createCoverCache(maxCacheSize);
     }
 
     /**
@@ -78,15 +87,27 @@ public class BookCoverService {
                 .distinct()
                 .toList();
 
+        Map<String, String> coverUrls = new LinkedHashMap<>();
         List<String> missingIsbns = normalizedIsbns.stream()
-                .filter(isbn -> !coverCache.containsKey(isbn))
+                .filter(isbn -> {
+                    String coverUrl = coverCache.get(isbn);
+                    if (coverUrl != null) {
+                        if (!coverUrl.isBlank()) {
+                            coverUrls.put(isbn, coverUrl);
+                        }
+                        return false;
+                    }
+                    return true;
+                })
                 .toList();
         if (!missingIsbns.isEmpty()) {
             fetchAndCacheCovers(missingIsbns);
         }
 
-        Map<String, String> coverUrls = new LinkedHashMap<>();
         normalizedIsbns.forEach(isbn -> {
+            if (coverUrls.containsKey(isbn)) {
+                return;
+            }
             String coverUrl = coverCache.get(isbn);
             if (coverUrl != null && !coverUrl.isBlank()) {
                 coverUrls.put(isbn, coverUrl);
@@ -125,6 +146,15 @@ public class BookCoverService {
                 .reduce((left, right) -> left + "," + right)
                 .orElse("");
         return URI.create(OPENBD_API_URL + joinedIsbns);
+    }
+
+    private Map<String, String> createCoverCache(int maxCacheSize) {
+        return Collections.synchronizedMap(new LinkedHashMap<>(16, 0.75f, true) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                return size() > maxCacheSize;
+            }
+        });
     }
 
     private String readCoverUrl(JsonNode root, int index) {

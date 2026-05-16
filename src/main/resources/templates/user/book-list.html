@@ -58,6 +58,14 @@
             });
         }
 
+        function applyHydratedCovers() {
+            document.querySelectorAll('[data-cover-isbn]').forEach(img => {
+                const book = bookByIsbn.get(img.getAttribute('data-cover-isbn'));
+                applyCoverImage(img, book);
+            });
+            document.dispatchEvent(new Event('book-covers-hydrated'));
+        }
+
         async function hydrateOpenBdCovers() {
             const isbnList = books.map(book => book.isbn).filter(Boolean);
             if (isbnList.length === 0) {
@@ -92,12 +100,8 @@
                     });
                     console.warn('openBDから書影を取得できませんでした。', error);
                 }
+                applyHydratedCovers();
             }
-
-            document.querySelectorAll('[data-cover-isbn]').forEach(img => {
-                const book = bookByIsbn.get(img.getAttribute('data-cover-isbn'));
-                applyCoverImage(img, book);
-            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -126,6 +130,12 @@
                     modalDescription.textContent = selectedBook.description;
                 };
                 trigger.addEventListener('click', selectBook);
+            });
+
+            document.addEventListener('book-covers-hydrated', () => {
+                if (selectedBook) {
+                    applyCoverImage(modalCover, selectedBook);
+                }
             });
 
             addCartButton.addEventListener('click', () => {
