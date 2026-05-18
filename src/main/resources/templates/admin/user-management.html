@@ -21,7 +21,9 @@ const headers = {
   "Content-Type": "application/json",
   [csrfHeader]: csrfToken,
 };
+const USER_MODAL_FOCUSABLE_SELECTOR = "button, [href], input, select, textarea, [tabindex]:not([tabindex=\"-1\"])";
 let userModalMode = "create";
+let userModalTrigger = null;
 
 function addUser() {
   const API_ENDPOINT = ROOT_API_URL;
@@ -92,7 +94,7 @@ function deleteUser(event) {
     });
 }
 
-function openCreateUserModal() {
+function openCreateUserModal(event) {
   userModalMode = "create";
   document.getElementById("user-modal-title").textContent = "ユーザを追加";
   document.getElementById("modalSubmitButton").textContent = "追加";
@@ -102,7 +104,7 @@ function openCreateUserModal() {
   document.getElementById("modalPassword").value = "";
   document.getElementById("modalPassword").placeholder = "初期パスワード";
   document.getElementById("modalIsAdmin").checked = false;
-  openUserModal();
+  openUserModal(event.currentTarget);
 }
 
 function openEditUserModal(event) {
@@ -116,11 +118,12 @@ function openEditUserModal(event) {
   document.getElementById("modalPassword").value = "";
   document.getElementById("modalPassword").placeholder = "変更する場合のみ入力";
   document.getElementById("modalIsAdmin").checked = row.dataset.role === "admin";
-  openUserModal();
+  openUserModal(event.currentTarget);
 }
 
-function openUserModal() {
+function openUserModal(trigger) {
   const modal = document.getElementById("user-modal");
+  userModalTrigger = trigger || document.activeElement;
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
   document.body.classList.add("is-modal-open");
@@ -129,9 +132,59 @@ function openUserModal() {
 
 function closeUserModal() {
   const modal = document.getElementById("user-modal");
+  const shouldRestoreFocus = modal.classList.contains("is-open");
   modal.classList.remove("is-open");
   modal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("is-modal-open");
+
+  if (shouldRestoreFocus && userModalTrigger && document.contains(userModalTrigger)) {
+    userModalTrigger.focus({preventScroll: true});
+  }
+  userModalTrigger = null;
+}
+
+function getFocusableUserModalElements() {
+  const modal = document.getElementById("user-modal");
+  return Array.from(modal.querySelectorAll(USER_MODAL_FOCUSABLE_SELECTOR))
+    .filter((element) => !element.disabled && element.getClientRects().length > 0);
+}
+
+function trapUserModalFocus(event) {
+  const modal = document.getElementById("user-modal");
+  if (!modal.classList.contains("is-open")) {
+    return;
+  }
+
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeUserModal();
+    return;
+  }
+
+  if (event.key !== "Tab") {
+    return;
+  }
+
+  const focusableElements = getFocusableUserModalElements();
+  if (focusableElements.length === 0) {
+    event.preventDefault();
+    modal.focus({preventScroll: true});
+    return;
+  }
+
+  const firstElement = focusableElements[0];
+  const lastElement = focusableElements[focusableElements.length - 1];
+
+  if (!modal.contains(document.activeElement)) {
+    event.preventDefault();
+    firstElement.focus({preventScroll: true});
+  } else if (event.shiftKey && document.activeElement === firstElement) {
+    event.preventDefault();
+    lastElement.focus({preventScroll: true});
+  } else if (!event.shiftKey && document.activeElement === lastElement) {
+    event.preventDefault();
+    firstElement.focus({preventScroll: true});
+  }
 }
 
 function submitUserForm() {
@@ -184,10 +237,20 @@ function copyUserIdWithFallback(userId) {
   textarea.setAttribute("readonly", "");
   textarea.style.position = "fixed";
   textarea.style.opacity = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
+
+  try {
+    document.body.appendChild(textarea);
+    textarea.select();
+    if (!document.execCommand("copy")) {
+      alert("ユーザIDをコピーできませんでした。手動でコピーしてください: " + userId);
+    }
+  } catch (error) {
+    alert("ユーザIDをコピーできませんでした。手動でコピーしてください: " + userId);
+  } finally {
+    if (textarea.parentNode) {
+      document.body.removeChild(textarea);
+    }
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -199,11 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
       closeUserModal();
     }
   });
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      closeUserModal();
-    }
-  });
+  document.addEventListener("keydown", trapUserModalFocus);
 });
 
     </script>
@@ -233,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     <path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <button type="button" class="primary-action-button" onclick="openCreateUserModal()">
+            <button type="button" class="primary-action-button" onclick="openCreateUserModal(event)">
                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
                     <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>

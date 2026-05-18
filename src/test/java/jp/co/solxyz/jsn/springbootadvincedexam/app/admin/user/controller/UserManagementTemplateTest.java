@@ -66,6 +66,12 @@ class UserManagementTemplateTest {
                 .andExpect(MockMvcResultMatchers.content().string(containsString("ユーザを追加")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"ユーザ検索\"")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"権限フィルター\"")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("trapUserModalFocus")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("event.key !== \"Tab\"")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("userModalTrigger.focus({preventScroll: true})")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("手動でコピーしてください")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("document.execCommand(\"copy\")")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("textarea.parentNode")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("admin@solxyz.co.jp")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("一般ユーザ")));
     }
