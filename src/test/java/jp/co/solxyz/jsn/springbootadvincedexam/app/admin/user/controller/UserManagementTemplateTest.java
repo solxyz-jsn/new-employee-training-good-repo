@@ -5,7 +5,6 @@ import jp.co.solxyz.jsn.springbootadvincedexam.app.admin.user.service.UserManage
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,7 +36,6 @@ class UserManagementTemplateTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -66,6 +64,8 @@ class UserManagementTemplateTest {
                 .andExpect(MockMvcResultMatchers.view().name("admin/user-management"))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("user-management-main")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("ユーザを追加")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"ユーザ検索\"")))
+                .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"権限フィルター\"")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("admin@solxyz.co.jp")))
                 .andExpect(MockMvcResultMatchers.content().string(containsString("一般ユーザ")));
     }

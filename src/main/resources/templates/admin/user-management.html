@@ -247,10 +247,11 @@ document.addEventListener("DOMContentLoaded", () => {
             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
                 <path d="m20 20-4.35-4.35M18 11a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
             </svg>
-            <input id="userSearch" type="search" placeholder="ユーザ名、メールアドレス、ユーザIDで検索" autocomplete="off">
+            <input id="userSearch" type="search" placeholder="ユーザ名、メールアドレス、ユーザIDで検索" autocomplete="off"
+                   aria-label="ユーザ検索">
         </label>
         <label class="permission-control" for="permissionFilter">
-            <select id="permissionFilter">
+            <select id="permissionFilter" aria-label="権限フィルター">
                 <option value="all">すべての権限</option>
                 <option value="admin">管理者</option>
                 <option value="general">一般ユーザ</option>
