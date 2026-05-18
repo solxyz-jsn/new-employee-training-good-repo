@@ -2,11 +2,15 @@ package jp.co.solxyz.jsn.springbootadvincedexam.app.admin.user.controller;
 
 import jp.co.solxyz.jsn.springbootadvincedexam.app.admin.user.model.UserManagementModel;
 import jp.co.solxyz.jsn.springbootadvincedexam.app.admin.user.service.UserManagementService;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -15,7 +19,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -59,20 +67,36 @@ class UserManagementTemplateTest {
                 false);
         when(userManagementService.getAllUsers()).thenReturn(List.of(admin, user));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/admin/management/user"))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/admin/management/user"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.view().name("admin/user-management"))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("user-management-main")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("ユーザを追加")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"ユーザ検索\"")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("aria-label=\"権限フィルター\"")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("trapUserModalFocus")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("event.key !== \"Tab\"")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("userModalTrigger.focus({preventScroll: true})")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("手動でコピーしてください")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("document.execCommand(\"copy\")")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("textarea.parentNode")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("admin@solxyz.co.jp")))
-                .andExpect(MockMvcResultMatchers.content().string(containsString("一般ユーザ")));
+                .andReturn();
+
+        Document document = Jsoup.parse(result.getResponse().getContentAsString());
+        Element userModal = requireElement(document, "#user-modal");
+        assertThat(userModal.hasClass("modal"), is(true));
+        assertThat(userModal.hasClass("user-modal"), is(true));
+        assertThat(userModal.attr("tabindex"), equalTo("-1"));
+        assertThat(userModal.attr("aria-hidden"), equalTo("true"));
+
+        Element userDialog = requireElement(document, "#user-modal [role=dialog]");
+        assertThat(userDialog.attr("aria-modal"), equalTo("true"));
+        assertThat(userDialog.attr("aria-labelledby"), equalTo("user-modal-title"));
+
+        assertThat(requireElement(document, "#userSearch").attr("aria-label"), equalTo("ユーザ検索"));
+        assertThat(requireElement(document, "#permissionFilter").attr("aria-label"), equalTo("権限フィルター"));
+        requireElement(document, ".user-modal-close[aria-label='閉じる']");
+        requireElement(document, ".copy-id-button[aria-label='ユーザIDをコピー']");
+        requireElement(document, ".user-management-main");
+
+        assertThat(document.text(), containsString("ユーザを追加"));
+        assertThat(document.text(), containsString("admin@solxyz.co.jp"));
+        assertThat(document.text(), containsString("一般ユーザ"));
+    }
+
+    private static Element requireElement(Document document, String cssQuery) {
+        Element element = document.selectFirst(cssQuery);
+        assertThat(cssQuery, element, notNullValue());
+        return element;
     }
 }
