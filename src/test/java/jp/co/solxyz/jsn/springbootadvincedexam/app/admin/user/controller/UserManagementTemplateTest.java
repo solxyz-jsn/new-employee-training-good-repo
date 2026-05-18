@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -88,6 +89,7 @@ class UserManagementTemplateTest {
         requireElement(document, ".user-modal-close[aria-label='閉じる']");
         requireElement(document, ".copy-id-button[aria-label='ユーザIDをコピー']");
         requireElement(document, ".user-management-main");
+        assertThat(document.selectFirst(".current-user"), nullValue());
 
         assertThat(document.text(), containsString("ユーザを追加"));
         assertThat(document.text(), containsString("admin@solxyz.co.jp"));

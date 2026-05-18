@@ -270,36 +270,19 @@ document.addEventListener("DOMContentLoaded", () => {
 <body class="user-management-screen">
 <div id="foo" th:replace="~{common/nav-bar :: bar}"></div>
 <main class="user-management-main">
-    <header class="user-management-header">
-        <div class="page-title-group">
-            <div class="page-title-row">
-                <svg class="page-title-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="M9.5 12.25a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.9"/>
-                    <path d="M3.25 20a6.25 6.25 0 0 1 12.5 0" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                    <path d="M17.4 9.5a2.8 2.8 0 1 0 0-5.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                    <path d="M18.75 19.2a5.25 5.25 0 0 0-3.2-4.82" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
-                </svg>
-                <h1>ユーザ管理</h1>
-            </div>
+    <section class="user-management-header">
+        <div>
+            <h1>ユーザ管理</h1>
             <p>システムに登録されているユーザの情報を管理できます。</p>
         </div>
 
-        <div class="header-actions">
-            <div class="current-user">
-                <span class="current-user-avatar" th:text="${#strings.substring(#authentication.principal.username, 0, 1)}">T</span>
-                <span class="current-user-name" th:text="${#authentication.principal.username}">テスト 太郎</span>
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <button type="button" class="primary-action-button" onclick="openCreateUserModal(event)">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span>ユーザを追加</span>
-            </button>
-        </div>
-    </header>
+        <button type="button" class="primary-action-button" onclick="openCreateUserModal(event)">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>ユーザを追加</span>
+        </button>
+    </section>
 
     <section class="user-filter-panel" aria-label="ユーザ検索">
         <label class="search-control" for="userSearch">
