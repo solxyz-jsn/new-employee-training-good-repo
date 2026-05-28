@@ -12,9 +12,11 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 書影取得ユースケース
@@ -50,39 +52,76 @@ public class BookCoverUseCase {
      * @return ISBNと書影URLのマップ
      */
     public Map<String, String> getCoverUrls(List<String> isbnList) {
-        List<String> normalizedIsbns = isbnList.stream()
-                .map(String::trim)
-                .filter(isbn -> !isbn.isBlank())
-                .distinct()
-                .toList();
+        List<String> normalizedIsbns = normalizeIsbns(isbnList);
 
         Map<String, String> coverUrls = new LinkedHashMap<>();
-        List<String> missingIsbns = normalizedIsbns.stream()
-                .filter(isbn -> {
-                    String coverUrl = bookCoverCache.get(isbn);
-                    if (coverUrl != null) {
-                        if (bookCoverCache.hasCover(coverUrl)) {
-                            coverUrls.put(isbn, coverUrl);
-                        }
-                        return false;
-                    }
-                    return true;
-                })
-                .toList();
+        List<String> missingIsbns = findMissingIsbns(normalizedIsbns, coverUrls);
         if (!missingIsbns.isEmpty()) {
             fetchAndCacheCovers(missingIsbns);
         }
 
-        normalizedIsbns.forEach(isbn -> {
-            if (coverUrls.containsKey(isbn)) {
-                return;
-            }
-            String coverUrl = bookCoverCache.get(isbn);
-            if (bookCoverCache.hasCover(coverUrl)) {
-                coverUrls.put(isbn, coverUrl);
-            }
-        });
+        putFetchedCoverUrls(normalizedIsbns, coverUrls);
         return coverUrls;
+    }
+
+    /**
+     * キャッシュに結果がないISBNを抽出する
+     * @param isbnList ISBNリスト
+     * @param coverUrls 書影URLの結果マップ
+     * @return キャッシュミスしたISBNリスト
+     */
+    private List<String> findMissingIsbns(List<String> isbnList, Map<String, String> coverUrls) {
+        List<String> missingIsbns = new ArrayList<>();
+        for (String isbn : isbnList) {
+            if (!putCachedCoverUrl(isbn, coverUrls)) {
+                missingIsbns.add(isbn);
+            }
+        }
+        return missingIsbns;
+    }
+
+    /**
+     * openBD取得後にキャッシュへ保存された書影URLを結果に反映する
+     * @param isbnList ISBNリスト
+     * @param coverUrls 書影URLの結果マップ
+     */
+    private void putFetchedCoverUrls(List<String> isbnList, Map<String, String> coverUrls) {
+        for (String isbn : isbnList) {
+            if (coverUrls.containsKey(isbn)) {
+                continue;
+            }
+            putCachedCoverUrl(isbn, coverUrls);
+        }
+    }
+
+    /**
+     * ISBNリストをopenBD問い合わせ用に正規化する
+     * @param isbnList ISBNリスト
+     * @return 正規化済みISBNリスト
+     */
+    private List<String> normalizeIsbns(List<String> isbnList) {
+        return isbnList.stream()
+                .map(String::trim)
+                .filter(isbn -> !isbn.isBlank())
+                .distinct()
+                .toList();
+    }
+
+    /**
+     * キャッシュ済みの書影URLがあれば結果に追加する
+     * @param isbn ISBN
+     * @param coverUrls 書影URLの結果マップ
+     * @return キャッシュにISBNの結果が存在すればtrue
+     */
+    private boolean putCachedCoverUrl(String isbn, Map<String, String> coverUrls) {
+        String coverUrl = bookCoverCache.get(isbn);
+        if (coverUrl == null) {
+            return false;
+        }
+        if (bookCoverCache.hasCover(coverUrl)) {
+            coverUrls.put(isbn, coverUrl);
+        }
+        return true;
     }
 
     /**
@@ -123,8 +162,7 @@ public class BookCoverUseCase {
     private String buildOpenBdPath(List<String> isbnList) {
         String joinedIsbns = isbnList.stream()
                 .map(isbn -> URLEncoder.encode(isbn, StandardCharsets.UTF_8))
-                .reduce((left, right) -> left + "," + right)
-                .orElse("");
+                .collect(Collectors.joining(","));
         return OPENBD_GET_PATH + "?isbn=" + joinedIsbns;
     }
 

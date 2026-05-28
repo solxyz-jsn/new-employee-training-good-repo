@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,12 +65,15 @@ public class BookLendingManager {
             throw new NoSuchElementException("ISBNの一致する書籍が存在しません。");
         }
         List<BookCheckoutHistory> userBooks = bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId);
+        Set<String> userBookIsbns = userBooks.stream()
+                .map(BookCheckoutHistory::getIsbn)
+                .collect(Collectors.toSet());
 
         // 借りる本
         List<Book> checkoutBooks = new ArrayList<>();
         // すでに借りている本がある場合は、借りられない
         for (Book book : books) {
-            if (userBooks.stream().anyMatch(h -> h.getIsbn().equals(book.getIsbn()))) {
+            if (userBookIsbns.contains(book.getIsbn())) {
                 log.info("すでに借りている本のため、チェックアウトできません。ISBN: {}", book.getIsbn());
                 notCheckoutBooks.add(book);
             } else {
@@ -114,19 +119,43 @@ public class BookLendingManager {
     public List<UnreturnedBook> getUnreturnedBooksByUserId(String userId) {
         List<BookCheckoutHistory> histories = bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId);
         Set<String> isbnList = histories.stream().map(BookCheckoutHistory::getIsbn).collect(Collectors.toSet());
+        Map<String, LocalDateTime> rentalAtByIsbn = toRentalAtByIsbn(histories);
         List<Book> result = bookRepository.findAllById(isbnList);
         List<UnreturnedBook> unreturnedBooks = new ArrayList<>();
         for (Book book : result) {
-            UnreturnedBook unreturnedBook = new UnreturnedBook();
-            unreturnedBook.setIsbn(book.getIsbn());
-            unreturnedBook.setTitle(book.getTitle());
-            unreturnedBook.setAuthor(book.getAuthor());
-            unreturnedBook.setPublisher(book.getPublisher());
-            unreturnedBook.setRentalAt(histories.stream().filter(h -> h.getIsbn().equals(book.getIsbn())).findFirst().get().getRentalAt());
-            unreturnedBooks.add(unreturnedBook);
+            unreturnedBooks.add(toUnreturnedBook(book, rentalAtByIsbn));
         }
 
         return unreturnedBooks;
+    }
+
+    /**
+     * ISBNごとの貸出日時を作成する
+     * @param histories 貸出履歴
+     * @return ISBNごとの貸出日時
+     */
+    private Map<String, LocalDateTime> toRentalAtByIsbn(List<BookCheckoutHistory> histories) {
+        Map<String, LocalDateTime> rentalAtByIsbn = new HashMap<>();
+        for (BookCheckoutHistory history : histories) {
+            rentalAtByIsbn.putIfAbsent(history.getIsbn(), history.getRentalAt());
+        }
+        return rentalAtByIsbn;
+    }
+
+    /**
+     * 書籍と貸出日時から未返却書籍情報を作成する
+     * @param book 書籍
+     * @param rentalAtByIsbn ISBNごとの貸出日時
+     * @return 未返却書籍情報
+     */
+    private UnreturnedBook toUnreturnedBook(Book book, Map<String, LocalDateTime> rentalAtByIsbn) {
+        UnreturnedBook unreturnedBook = new UnreturnedBook();
+        unreturnedBook.setIsbn(book.getIsbn());
+        unreturnedBook.setTitle(book.getTitle());
+        unreturnedBook.setAuthor(book.getAuthor());
+        unreturnedBook.setPublisher(book.getPublisher());
+        unreturnedBook.setRentalAt(rentalAtByIsbn.get(book.getIsbn()));
+        return unreturnedBook;
     }
 
     /**

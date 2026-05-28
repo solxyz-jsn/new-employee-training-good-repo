@@ -1,6 +1,4 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session;
-
-import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session.Cart;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
@@ -33,9 +31,7 @@ public class CartSession implements Serializable {
      * @param cart 追加するカート情報
      */
     public void addCart(Cart cart) {
-        boolean isExist = cartList.stream()
-                .anyMatch(c -> c.getIsbn().equals(cart.getIsbn()));
-        if (!isExist) {
+        if (!containsIsbn(cart.getIsbn())) {
             cartList.add(cart);
         }
     }
@@ -45,10 +41,27 @@ public class CartSession implements Serializable {
      * @param isbn 削除する書籍のISBN
      */
     public void removeCart(String isbn) {
-        cartList.stream()
-                .filter(cart -> cart.getIsbn().equals(isbn))
-                .findFirst()
-                .ifPresent(cartList::remove);
+        cartList.removeIf(cart -> hasIsbn(cart, isbn));
+    }
+
+    /**
+     * カートに指定したISBNの書籍が存在するか判定する
+     * @param isbn ISBN
+     * @return 指定したISBNの書籍が存在する場合true
+     */
+    private boolean containsIsbn(String isbn) {
+        return cartList.stream()
+                .anyMatch(cart -> hasIsbn(cart, isbn));
+    }
+
+    /**
+     * カート情報が指定したISBNを持つか判定する
+     * @param cart カート情報
+     * @param isbn ISBN
+     * @return ISBNが一致する場合true
+     */
+    private boolean hasIsbn(Cart cart, String isbn) {
+        return isbn.equals(cart.getIsbn());
     }
 
     /**

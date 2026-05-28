@@ -45,18 +45,45 @@ public class BookCoverApiController {
      */
     @GetMapping
     public ResponseEntity<Map<String, String>> getCoverUrls(@RequestParam("isbn") String isbn) {
-        List<String> requestedIsbns = Arrays.stream(isbn.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isBlank())
-                .toList();
-        if (requestedIsbns.isEmpty()
-                || requestedIsbns.size() > MAX_ISBN_COUNT
-                || requestedIsbns.stream().anyMatch(value -> !ISBN_PATTERN.matcher(value).matches())) {
+        List<String> requestedIsbns = parseRequestedIsbns(isbn);
+        if (isInvalidRequest(requestedIsbns)) {
             log.info("ISBN is invalid");
             return ResponseEntity.badRequest().build();
         }
 
         List<String> isbnList = requestedIsbns.stream().distinct().toList();
         return ResponseEntity.ok(bookCoverUseCase.getCoverUrls(isbnList));
+    }
+
+    /**
+     * リクエストされたISBN文字列をリストに変換する
+     * @param isbn カンマ区切りのISBN
+     * @return ISBNリスト
+     */
+    private List<String> parseRequestedIsbns(String isbn) {
+        return Arrays.stream(isbn.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isBlank())
+                .toList();
+    }
+
+    /**
+     * ISBNリクエストが不正か判定する
+     * @param requestedIsbns ISBNリスト
+     * @return 不正な場合true
+     */
+    private boolean isInvalidRequest(List<String> requestedIsbns) {
+        return requestedIsbns.isEmpty()
+                || requestedIsbns.size() > MAX_ISBN_COUNT
+                || requestedIsbns.stream().anyMatch(this::isInvalidIsbn);
+    }
+
+    /**
+     * ISBN形式が不正か判定する
+     * @param isbn ISBN
+     * @return 不正な場合true
+     */
+    private boolean isInvalidIsbn(String isbn) {
+        return !ISBN_PATTERN.matcher(isbn).matches();
     }
 }
