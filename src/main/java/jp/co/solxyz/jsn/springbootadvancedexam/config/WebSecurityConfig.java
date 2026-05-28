@@ -32,8 +32,8 @@ public class WebSecurityConfig {
                         .failureUrl("/login?error=true")
                         .permitAll()).logout(logout -> logout.logoutSuccessUrl("/login"))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/css/**", "/js/*", "/login", "/").permitAll()
+                        .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/css/**", "/js/**", "/login", "/").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }
