@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.security;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 /**
  * ユーザアカウントサービス
  */
+@NullMarked
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
