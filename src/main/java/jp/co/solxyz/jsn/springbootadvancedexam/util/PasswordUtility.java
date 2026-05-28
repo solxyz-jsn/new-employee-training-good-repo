@@ -1,5 +1,6 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.util;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -7,20 +8,13 @@ import org.springframework.stereotype.Component;
  * 文字列ユーティリティ
  */
 @Component
+@RequiredArgsConstructor
 public class PasswordUtility {
 
     /**
      * パスワードエンコーダ
      */
     private final PasswordEncoder passwordEncoder;
-
-    /**
-     * コンストラクタ
-     * @param passwordEncoder パスワードエンコーダ
-     */
-    public PasswordUtility(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     /**
      * パスワードをハッシュ化する

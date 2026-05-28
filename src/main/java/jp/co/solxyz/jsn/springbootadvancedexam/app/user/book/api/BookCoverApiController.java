@@ -1,6 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.api;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service.BookCoverService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import java.util.regex.Pattern;
  */
 @RestController
 @RequestMapping("/api/book/covers")
+@RequiredArgsConstructor
 @Slf4j
 public class BookCoverApiController {
 
@@ -35,14 +37,6 @@ public class BookCoverApiController {
      * 書影取得サービス
      */
     private final BookCoverService bookCoverService;
-
-    /**
-     * コンストラクタ
-     * @param bookCoverService 書影取得サービス
-     */
-    public BookCoverApiController(BookCoverService bookCoverService) {
-        this.bookCoverService = bookCoverService;
-    }
 
     /**
      * ISBNに対応する書影URLを取得

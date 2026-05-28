@@ -6,6 +6,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service.BookCartSer
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
 import jp.co.solxyz.jsn.springbootadvancedexam.session.CartSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,6 +30,7 @@ import static jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.constant.Boo
  * カートコントローラ
  */
 @Controller
+@RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/book/cart")
 public class BookCartController {
@@ -45,18 +47,6 @@ public class BookCartController {
      * 現在日時取得用Clock
      */
     private final Clock clock;
-
-    /**
-     * コンストラクタ
-     * @param cartSession カートセッション
-     * @param bookCartService カートサービス
-     * @param clock 現在日時取得用Clock
-     */
-    public BookCartController(CartSession cartSession, BookCartService bookCartService, Clock clock) {
-        this.cartSession = cartSession;
-        this.bookCartService = bookCartService;
-        this.clock = clock;
-    }
 
     /**
      * カート画面表示

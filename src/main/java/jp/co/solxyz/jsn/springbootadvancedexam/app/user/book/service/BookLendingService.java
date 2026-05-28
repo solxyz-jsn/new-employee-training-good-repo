@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.UnreturnedBookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookLendingManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.model.UnreturnedBook;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,20 +12,13 @@ import java.util.List;
  * 書籍返却サービス
  */
 @Service
+@RequiredArgsConstructor
 public class BookLendingService {
 
     /**
      * 書籍貸出ビジネスロジック
      */
     private final BookLendingManager bookLendingManager;
-
-    /**
-     * コンストラクタ
-     * @param bookLendingManager 書籍貸出ビジネスロジック
-     */
-    public BookLendingService(BookLendingManager bookLendingManager) {
-        this.bookLendingManager = bookLendingManager;
-    }
 
     /**
      * ユーザの未返却書籍取得

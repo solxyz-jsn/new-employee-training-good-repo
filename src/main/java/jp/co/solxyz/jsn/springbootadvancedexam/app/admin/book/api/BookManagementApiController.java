@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.api;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.json.BookDetail;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.service.BookManagementService;
 import jp.co.solxyz.jsn.springbootadvancedexam.common.validation.annotation.Isbn;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -28,6 +29,7 @@ import java.util.NoSuchElementException;
  */
 @RestController
 @RequestMapping("/api/admin/management/book")
+@RequiredArgsConstructor
 @Slf4j
 public class BookManagementApiController {
 
@@ -35,14 +37,6 @@ public class BookManagementApiController {
      * 書籍管理サービス
      */
     private final BookManagementService bookManagementService;
-
-    /**
-     * コンストラクタ
-     * @param bookManagementService 書籍管理サービス
-     */
-    public BookManagementApiController(BookManagementService bookManagementService) {
-        this.bookManagementService = bookManagementService;
-    }
 
     /**
      * 書籍登録

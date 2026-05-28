@@ -4,6 +4,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.json.BookDetail;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookMetadataManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
  * 書籍管理サービス
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class BookManagementService {
 
@@ -27,16 +29,6 @@ public class BookManagementService {
     private final BookMetadataManager bookMetadataManager;
     /** 現在日時取得用Clock */
     private final Clock clock;
-
-    /**
-     * コンストラクタ
-     * @param bookInventoryManager 書籍サービスビジネスロジック
-     */
-    public BookManagementService(BookInventoryManager bookInventoryManager, BookMetadataManager bookMetadataManager, Clock clock) {
-        this.bookInventoryManager = bookInventoryManager;
-        this.bookMetadataManager = bookMetadataManager;
-        this.clock = clock;
-    }
 
     /**
      * 全書籍情報の取得

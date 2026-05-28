@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.api;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.json.ReturnBookIsbn;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service.BookLendingService;
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
@@ -20,20 +21,13 @@ import java.util.NoSuchElementException;
  */
 @RestController
 @RequestMapping("/api/book/return")
+@RequiredArgsConstructor
 @Slf4j
 public class BookReturnApiController {
     /**
      * 書籍返却サービス
      */
     private final BookLendingService bookReturnService;
-
-    /**
-     * コンストラクタ
-     * @param bookReturnService 書籍返却サービス
-     */
-    public BookReturnApiController(BookLendingService bookReturnService) {
-        this.bookReturnService = bookReturnService;
-    }
 
     /**
      * 書籍の返却

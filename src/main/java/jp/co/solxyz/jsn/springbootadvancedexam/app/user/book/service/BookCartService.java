@@ -5,6 +5,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookLendingManager
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.session.dto.Cart;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  * カートサービス
  */
 @Service
+@RequiredArgsConstructor
 public class BookCartService {
 
     /**
@@ -25,16 +27,6 @@ public class BookCartService {
      * 書籍貸出ビジネスロジック
      */
     private final BookLendingManager bookLendingManager;
-
-    /**
-     * コンストラクタ
-     * @param bookInventoryManager 書籍サービスビジネスロジック
-     * @param bookLendingManager 書籍貸出ビジネスロジック
-     */
-    public BookCartService(BookInventoryManager bookInventoryManager, BookLendingManager bookLendingManager) {
-        this.bookInventoryManager = bookInventoryManager;
-        this.bookLendingManager = bookLendingManager;
-    }
 
     /**
      * カート情報取得

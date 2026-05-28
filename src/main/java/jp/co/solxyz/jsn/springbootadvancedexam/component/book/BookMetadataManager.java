@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.component.book;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -16,6 +17,7 @@ import java.util.NoSuchElementException;
  * 書籍メタデータ管理クラス
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class BookMetadataManager {
 
@@ -24,16 +26,6 @@ public class BookMetadataManager {
 
     /** 書籍貸出履歴リポジトリ */
     private final BookCheckoutHistoryRepository bookCheckoutHistoryRepository;
-
-    /**
-     * コンストラクタ
-     * @param bookRepository 書籍リポジトリ
-     * @param bookCheckoutHistoryRepository 書籍貸出履歴リポジトリ
-     */
-    public BookMetadataManager(BookRepository bookRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository) {
-        this.bookRepository = bookRepository;
-        this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
-    }
 
     /**
      * 書籍情報の登録

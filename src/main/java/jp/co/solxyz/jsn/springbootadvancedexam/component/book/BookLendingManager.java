@@ -6,6 +6,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.BookCheckoutHis
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.util.UUIDGenerator;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  * 書籍の貸出に関するビジネスロジッククラス
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class BookLendingManager {
 
@@ -39,19 +41,6 @@ public class BookLendingManager {
     private final UUIDGenerator uuidGenerator;
     /** 現在日時取得用Clock */
     private final Clock clock;
-
-    /**
-     * コンストラクタ
-     * @param bookRepository 書籍リポジトリ
-     * @param bookCheckoutHistoryRepository 書籍貸出履歴リポジトリ
-     */
-    public BookLendingManager(BookRepository bookRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository,
-            UUIDGenerator uuidGenerator, Clock clock) {
-        this.bookRepository = bookRepository;
-        this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
-        this.uuidGenerator = uuidGenerator;
-        this.clock = clock;
-    }
 
     /**
      * チェックアウト

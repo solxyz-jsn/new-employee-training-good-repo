@@ -3,8 +3,8 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.controller;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.BookManagementModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.service.BookManagementService;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +18,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/admin/management/book")
+@RequiredArgsConstructor
 @Slf4j
 public class BookManagementController {
 
@@ -25,15 +26,6 @@ public class BookManagementController {
      * 書籍管理サービス
      */
     private final BookManagementService bookManagementService;
-
-    /**
-     * コンストラクタ
-     * @param bookManagementService 書籍管理サービス
-     */
-    @Autowired
-    public BookManagementController(BookManagementService bookManagementService) {
-        this.bookManagementService = bookManagementService;
-    }
 
     /**
      * 書籍一覧画面表示

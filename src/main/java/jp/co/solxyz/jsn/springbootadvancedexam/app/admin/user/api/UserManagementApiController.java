@@ -6,6 +6,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.model.validation.O
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.model.validation.OnUserUpdate;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.service.UserManagementService;
 import jp.co.solxyz.jsn.springbootadvancedexam.common.validation.annotation.UserId;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -32,6 +33,7 @@ import java.util.NoSuchElementException;
  */
 @RestController
 @RequestMapping("/api/admin/management/user")
+@RequiredArgsConstructor
 @Slf4j
 public class UserManagementApiController {
 
@@ -39,14 +41,6 @@ public class UserManagementApiController {
      * ユーザ管理サービス
      */
     private final UserManagementService userManagementService;
-
-    /**
-     * コンストラクタ
-     * @param userManagementService ユーザ管理サービス
-     */
-    public UserManagementApiController(UserManagementService userManagementService) {
-        this.userManagementService = userManagementService;
-    }
 
     /**
      * ユーザ情報を登録する

@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.api;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.json.CartIsbn;
 import jp.co.solxyz.jsn.springbootadvancedexam.session.dto.Cart;
 import jp.co.solxyz.jsn.springbootadvancedexam.session.CartSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/book/cart")
+@RequiredArgsConstructor
 @Slf4j
 public class BookCartApiController {
 
@@ -24,14 +26,6 @@ public class BookCartApiController {
      * カートセッション
      */
     private final CartSession cartSession;
-
-    /**
-     * コンストラクタ
-     * @param cartSession カートセッション
-     */
-    public BookCartApiController(CartSession cartSession) {
-        this.cartSession = cartSession;
-    }
 
     /**
      * カートに追加

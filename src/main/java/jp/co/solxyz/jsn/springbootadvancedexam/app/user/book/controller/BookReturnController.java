@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.controller;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.UnreturnedBookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service.BookLendingService;
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import static jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.constant.Boo
  */
 @Controller
 @RequestMapping("/book/return")
+@RequiredArgsConstructor
 public class BookReturnController {
     /**
      * 返却期限が近いとみなす残日数
@@ -36,16 +38,6 @@ public class BookReturnController {
      * 現在日時取得用Clock
      */
     private final Clock clock;
-
-    /**
-     * コンストラクタ
-     * @param bookReturnService 書籍返却サービス
-     * @param clock 現在日時取得用Clock
-     */
-    public BookReturnController(BookLendingService bookReturnService, Clock clock) {
-        this.bookReturnService = bookReturnService;
-        this.clock = clock;
-    }
 
     /**
      * 書籍返却画面表示

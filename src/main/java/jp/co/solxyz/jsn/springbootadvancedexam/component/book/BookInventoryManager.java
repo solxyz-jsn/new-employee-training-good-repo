@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.component.book;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -12,19 +13,12 @@ import java.util.NoSuchElementException;
  * 書籍への基本的な操作を行うビジネスロジッククラス
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class BookInventoryManager {
 
     /** 書籍リポジトリ*/
     private final BookRepository bookRepository;
-
-    /**
-     * コンストラクタ
-     * @param bookRepository 書籍リポジトリ
-     */
-    public BookInventoryManager(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
 
     /**
      * 全ての書籍を取得

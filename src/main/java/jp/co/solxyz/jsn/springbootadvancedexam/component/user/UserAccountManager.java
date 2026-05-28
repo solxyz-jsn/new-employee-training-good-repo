@@ -4,6 +4,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user.UserAccountRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.util.PasswordUtility;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * ユーザビジネスロジッククラス
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class UserAccountManager {
 
@@ -37,19 +39,6 @@ public class UserAccountManager {
      * パスワードユーティリティ
      */
     private final PasswordUtility passwordUtility;
-
-    /**
-     * コンストラクタ
-     * @param userAccountRepository ユーザアカウントリポジトリ
-     * @param bookCheckoutHistoryRepository 書籍貸し出し履歴リポジトリ
-     * @param passwordUtility パスワードユーティリティ
-     */
-    public UserAccountManager(UserAccountRepository userAccountRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository,
-            PasswordUtility passwordUtility) {
-        this.userAccountRepository = userAccountRepository;
-        this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
-        this.passwordUtility = passwordUtility;
-    }
 
     /**
      * パスワードを除いたユーザ情報を全件取得する

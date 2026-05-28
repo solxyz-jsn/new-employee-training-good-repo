@@ -5,6 +5,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.model.UserManageme
 import jp.co.solxyz.jsn.springbootadvancedexam.util.UUIDGenerator;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.user.UserAccountManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.Objects;
  * ユーザ管理サービス
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class UserManagementService {
 
@@ -31,16 +33,6 @@ public class UserManagementService {
     private final UUIDGenerator uuidGenerator;
     /** 現在日時取得用Clock */
     private final Clock clock;
-
-    /**
-     * コンストラクタ
-     * @param userAccountManager ユーザアカウントリポジトリ
-     */
-    public UserManagementService(UserAccountManager userAccountManager, UUIDGenerator uuidGenerator, Clock clock) {
-        this.userAccountManager = userAccountManager;
-        this.uuidGenerator = uuidGenerator;
-        this.clock = clock;
-    }
 
     /**
      * パスワードを除いたユーザ情報を全件取得する

@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,20 +11,13 @@ import java.util.List;
  * 書籍一覧サービス
  */
 @Service
+@RequiredArgsConstructor
 public class BookListService {
 
     /**
      * 書籍サービスビジネスロジック
      */
     private final BookInventoryManager bookInventoryManager;
-
-    /**
-     * コンストラクタ
-     * @param bookInventoryManager 書籍サービスビジネスロジック
-     */
-    public BookListService(BookInventoryManager bookInventoryManager) {
-        this.bookInventoryManager = bookInventoryManager;
-    }
 
     /**
      * 全書籍取得

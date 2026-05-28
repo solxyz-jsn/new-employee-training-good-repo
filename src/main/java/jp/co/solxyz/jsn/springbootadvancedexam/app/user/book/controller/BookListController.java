@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.BookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service.BookListService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/book/list")
+@RequiredArgsConstructor
 @Slf4j
 public class BookListController {
 
@@ -29,14 +31,6 @@ public class BookListController {
      * 書籍一覧サービス
      */
     private final BookListService bookListService;
-
-    /**
-     * コンストラクタ
-     * @param bookListService 書籍一覧サービス
-     */
-    public BookListController(BookListService bookListService) {
-        this.bookListService = bookListService;
-    }
 
     /**
      * 書籍一覧画面表示

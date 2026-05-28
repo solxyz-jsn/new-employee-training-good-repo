@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.controller;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.model.UserManagementModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.user.service.UserManagementService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/admin/management/user")
+@RequiredArgsConstructor
 @Slf4j
 public class UserManagementController {
 
@@ -22,14 +24,6 @@ public class UserManagementController {
      * ユーザ管理サービス
      */
     private final UserManagementService userManagementService;
-
-    /**
-     * コンストラクタ
-     * @param userManagementService ユーザ管理サービス
-     */
-    public UserManagementController(UserManagementService userManagementService) {
-        this.userManagementService = userManagementService;
-    }
 
     /**
      * ユーザ管理画面表示
