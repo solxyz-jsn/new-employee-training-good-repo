@@ -52,7 +52,11 @@ public class BookCoverUseCase {
      * @return ISBNと書影URLのマップ
      */
     public Map<String, String> getCoverUrls(List<String> isbnList) {
-        List<String> normalizedIsbns = normalizeIsbns(isbnList);
+        List<String> normalizedIsbns = isbnList.stream()
+                .map(String::trim)
+                .filter(isbn -> !isbn.isBlank())
+                .distinct()
+                .toList();
 
         Map<String, String> coverUrls = new LinkedHashMap<>();
         List<String> missingIsbns = findMissingIsbns(normalizedIsbns, coverUrls);
@@ -92,19 +96,6 @@ public class BookCoverUseCase {
             }
             putCachedCoverUrl(isbn, coverUrls);
         }
-    }
-
-    /**
-     * ISBNリストをopenBD問い合わせ用に正規化する
-     * @param isbnList ISBNリスト
-     * @return 正規化済みISBNリスト
-     */
-    private List<String> normalizeIsbns(List<String> isbnList) {
-        return isbnList.stream()
-                .map(String::trim)
-                .filter(isbn -> !isbn.isBlank())
-                .distinct()
-                .toList();
     }
 
     /**

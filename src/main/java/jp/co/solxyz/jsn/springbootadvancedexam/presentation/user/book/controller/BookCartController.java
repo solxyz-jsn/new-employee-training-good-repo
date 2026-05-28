@@ -7,7 +7,6 @@ import jp.co.solxyz.jsn.springbootadvancedexam.application.book.cart.CartItem;
 import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.model.BookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.model.CartBookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
-import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session.Cart;
 import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session.CartSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +57,10 @@ public class BookCartController {
     @GetMapping
     public ModelAndView index() {
         ModelAndView mav = new ModelAndView("user/book-cart");
-        List<CartBookModel> tableData = bookCartUseCase.getCartList(toCartItems(cartSession.getCartList())).stream()
+        List<CartItem> cartItems = cartSession.getCartList().stream()
+                .map(cart -> new CartItem(cart.getIsbn()))
+                .toList();
+        List<CartBookModel> tableData = bookCartUseCase.getCartList(cartItems).stream()
                 .map(this::toCartBookModel)
                 .toList();
         mav.addObject("cartList", tableData);
@@ -75,7 +77,10 @@ public class BookCartController {
     public ModelAndView checkout(@AuthenticationPrincipal MyUserDetails userDetails) {
         List<BookSummary> unCheckedOutBooks;
         try {
-            unCheckedOutBooks = bookCartUseCase.checkout(userDetails.getUserId(), toCartItems(cartSession.getCartList()));
+            List<CartItem> cartItems = cartSession.getCartList().stream()
+                    .map(cart -> new CartItem(cart.getIsbn()))
+                    .toList();
+            unCheckedOutBooks = bookCartUseCase.checkout(userDetails.getUserId(), cartItems);
         } catch (DataAccessException | NoSuchElementException e) {
             ModelAndView mav = new ModelAndView("user/book-cart");
             mav.addObject("errorMessage", "処理中にエラーが発生しました。");
@@ -139,16 +144,5 @@ public class BookCartController {
     private BookModel toBookModel(BookSummary book) {
         return new BookModel(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getAvailableStock(),
                 book.getDescription());
-    }
-
-    /**
-     * セッション内のカート情報をカート項目に変換する
-     * @param carts セッション内のカート情報
-     * @return カート項目
-     */
-    private List<CartItem> toCartItems(List<Cart> carts) {
-        return carts.stream()
-                .map(cart -> new CartItem(cart.getIsbn()))
-                .toList();
     }
 }

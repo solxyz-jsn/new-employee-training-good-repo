@@ -45,7 +45,10 @@ public class BookCoverApiController {
      */
     @GetMapping
     public ResponseEntity<Map<String, String>> getCoverUrls(@RequestParam("isbn") String isbn) {
-        List<String> requestedIsbns = parseRequestedIsbns(isbn);
+        List<String> requestedIsbns = Arrays.stream(isbn.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isBlank())
+                .toList();
         if (isInvalidRequest(requestedIsbns)) {
             log.info("ISBN is invalid");
             return ResponseEntity.badRequest().build();
@@ -53,18 +56,6 @@ public class BookCoverApiController {
 
         List<String> isbnList = requestedIsbns.stream().distinct().toList();
         return ResponseEntity.ok(bookCoverUseCase.getCoverUrls(isbnList));
-    }
-
-    /**
-     * リクエストされたISBN文字列をリストに変換する
-     * @param isbn カンマ区切りのISBN
-     * @return ISBNリスト
-     */
-    private List<String> parseRequestedIsbns(String isbn) {
-        return Arrays.stream(isbn.split(","))
-                .map(String::trim)
-                .filter(value -> !value.isBlank())
-                .toList();
     }
 
     /**

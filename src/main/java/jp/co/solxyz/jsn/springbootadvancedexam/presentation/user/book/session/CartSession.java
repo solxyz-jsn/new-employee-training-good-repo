@@ -31,7 +31,9 @@ public class CartSession implements Serializable {
      * @param cart 追加するカート情報
      */
     public void addCart(Cart cart) {
-        if (!containsIsbn(cart.getIsbn())) {
+        boolean isExist = cartList.stream()
+                .anyMatch(currentCart -> hasIsbn(currentCart, cart.getIsbn()));
+        if (!isExist) {
             cartList.add(cart);
         }
     }
@@ -42,16 +44,6 @@ public class CartSession implements Serializable {
      */
     public void removeCart(String isbn) {
         cartList.removeIf(cart -> hasIsbn(cart, isbn));
-    }
-
-    /**
-     * カートに指定したISBNの書籍が存在するか判定する
-     * @param isbn ISBN
-     * @return 指定したISBNの書籍が存在する場合true
-     */
-    private boolean containsIsbn(String isbn) {
-        return cartList.stream()
-                .anyMatch(cart -> hasIsbn(cart, isbn));
     }
 
     /**
