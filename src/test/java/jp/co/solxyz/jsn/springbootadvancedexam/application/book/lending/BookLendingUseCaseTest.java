@@ -1,7 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.application.book.lending;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookLendingManager;
-import jp.co.solxyz.jsn.springbootadvancedexam.component.book.model.UnreturnedBook;
+import jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending.BookLendingManager;
+import jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending.UnreturnedBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

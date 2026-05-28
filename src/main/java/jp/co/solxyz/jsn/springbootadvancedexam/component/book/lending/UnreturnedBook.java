@@ -1,4 +1,4 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.component.book.model;
+package jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending;
 
 import lombok.Data;
 
