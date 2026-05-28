@@ -83,12 +83,18 @@ public class UserManagementUseCase {
      * ユーザ情報を削除する
      * @param userId 削除するユーザID
      * @throws NoSuchElementException DBに存在しないユーザIDが指定された場合
-     * @throws IllegalStateException
+     * @throws IllegalStateException 管理者ユーザが1件のみの場合
+     * @throws DataAccessException ユーザ情報の削除に失敗した場合
      */
     public void deleteUser(String userId) throws NoSuchElementException, IllegalStateException, DataAccessException {
         userAccountManager.deleteUser(userId);
     }
 
+    /**
+     * ユーザアカウントをユーザ概要に変換する
+     * @param userAccount ユーザアカウント
+     * @return ユーザ概要
+     */
     private UserSummary toSummary(UserAccount userAccount) {
         UserSummary user = new UserSummary();
         user.setUserId(userAccount.getUserId());

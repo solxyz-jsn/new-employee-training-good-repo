@@ -89,6 +89,11 @@ public class BookManagementUseCase {
         bookMetadataManager.deleteByIsbn(isbn);
     }
 
+    /**
+     * 書籍エンティティを書籍管理概要に変換する
+     * @param book 書籍エンティティ
+     * @return 書籍管理概要
+     */
     private BookManagementSummary toSummary(Book book) {
         return new BookManagementSummary(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(),
                 book.getStock(), book.getCreatedAt(), book.getUpdatedAt());

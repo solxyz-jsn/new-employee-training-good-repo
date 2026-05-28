@@ -128,6 +128,11 @@ public class UserManagementApiController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * アカウントプロフィールリクエストをユーザプロフィールコマンドに変換する
+     * @param accountProfile アカウントプロフィールリクエスト
+     * @return ユーザプロフィールコマンド
+     */
     private UserProfileCommand toCommand(AccountProfile accountProfile) {
         UserProfileCommand command = new UserProfileCommand();
         command.setUserId(accountProfile.getUserId());

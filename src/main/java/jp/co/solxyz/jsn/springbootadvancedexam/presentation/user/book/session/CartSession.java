@@ -10,14 +10,28 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * カートのセッション情報
+ */
 @Getter
 @Component
 @SessionScope
 public class CartSession implements Serializable {
+    /**
+     * シリアルバージョンUID
+     */
     @Serial
     private static final long serialVersionUID = 1L;
+
+    /**
+     * カート情報リスト
+     */
     private final List<Cart> cartList = new ArrayList<>();
 
+    /**
+     * カートに書籍を追加する
+     * @param cart 追加するカート情報
+     */
     public void addCart(Cart cart) {
         boolean isExist = cartList.stream()
                 .anyMatch(c -> c.getIsbn().equals(cart.getIsbn()));
@@ -26,6 +40,10 @@ public class CartSession implements Serializable {
         }
     }
 
+    /**
+     * カートから指定した書籍を削除する
+     * @param isbn 削除する書籍のISBN
+     */
     public void removeCart(String isbn) {
         cartList.stream()
                 .filter(cart -> cart.getIsbn().equals(isbn))
@@ -33,6 +51,9 @@ public class CartSession implements Serializable {
                 .ifPresent(cartList::remove);
     }
 
+    /**
+     * カートを空にする
+     */
     public void clearCart() {
         cartList.clear();
     }

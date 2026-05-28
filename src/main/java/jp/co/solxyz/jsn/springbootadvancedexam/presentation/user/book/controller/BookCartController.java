@@ -122,15 +122,30 @@ public class BookCartController {
         return returnDueDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd")) + " (" + dayOfWeek + ")";
     }
 
+    /**
+     * カート書籍を画面表示用カート書籍モデルに変換する
+     * @param cartBook カート書籍
+     * @return 画面表示用カート書籍モデル
+     */
     private CartBookModel toCartBookModel(CartBook cartBook) {
         return new CartBookModel(cartBook.getIsbn(), cartBook.getTitle(), cartBook.getAuthor(), cartBook.getPublisher());
     }
 
+    /**
+     * 書籍概要を画面表示用書籍モデルに変換する
+     * @param book 書籍概要
+     * @return 画面表示用書籍モデル
+     */
     private BookModel toBookModel(BookSummary book) {
         return new BookModel(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getAvailableStock(),
                 book.getDescription());
     }
 
+    /**
+     * セッション内のカート情報をカート項目に変換する
+     * @param carts セッション内のカート情報
+     * @return カート項目
+     */
     private List<CartItem> toCartItems(List<Cart> carts) {
         return carts.stream()
                 .map(cart -> new CartItem(cart.getIsbn()))

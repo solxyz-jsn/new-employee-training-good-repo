@@ -42,6 +42,11 @@ public class UserManagementController {
         return mav;
     }
 
+    /**
+     * ユーザ概要を画面表示用モデルに変換する
+     * @param userSummary ユーザ概要
+     * @return 画面表示用ユーザ管理モデル
+     */
     private UserManagementModel toModel(UserSummary userSummary) {
         UserManagementModel model = new UserManagementModel();
         model.setUserId(userSummary.getUserId());

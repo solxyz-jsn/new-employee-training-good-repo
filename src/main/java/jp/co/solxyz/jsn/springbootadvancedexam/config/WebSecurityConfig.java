@@ -21,7 +21,7 @@ public class WebSecurityConfig {
      * 構成
      * @param http HttpSecurity
      * @return HttpSecurity フィルタチェーン
-     * @throws Exception　認証設定の構築に失敗した場合
+     * @throws Exception 認証設定の構築に失敗した場合
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

@@ -117,6 +117,11 @@ public class BookManagementApiController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 書籍詳細リクエストを書籍管理コマンドに変換する
+     * @param bookDetail 書籍詳細リクエスト
+     * @return 書籍管理コマンド
+     */
     private BookManagementCommand toCommand(BookDetail bookDetail) {
         BookManagementCommand command = new BookManagementCommand();
         command.setIsbn(bookDetail.getIsbn());

@@ -9,12 +9,29 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * ISBNバリデーションアノテーション
+ */
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = IsbnValidator.class)
 public @interface Isbn {
+    /**
+     * バリデーションエラーメッセージを取得する
+     * @return バリデーションエラーメッセージ
+     */
     String message() default "ISBNが不正です。";
+
+    /**
+     * バリデーショングループを取得する
+     * @return バリデーショングループ
+     */
     Class<?>[] groups() default {};
+
+    /**
+     * バリデーションペイロードを取得する
+     * @return バリデーションペイロード
+     */
     Class<? extends Payload>[] payload() default {};
 
 }

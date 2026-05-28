@@ -30,12 +30,13 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, String
      * @param password パスワード
      * @param updatedAt 更新日時
      * @param optimisticLockUpdatedAt 楽観ロック用更新日時
+     * @return 更新件数
      */
     @Transactional
     @Modifying
     @Query("UPDATE UserAccount e SET e.isAdmin = :isAdmin, e.email = :email, e.username = :username, e.password = :password, e.updatedAt = :updatedAt WHERE e.userId = :userId AND e.updatedAt = :optimisticLockUpdatedAt")
-    int updateWithPassword(String userId, boolean isAdmin, String email, String username,
-            String password, Instant updatedAt, Instant optimisticLockUpdatedAt);
+    int updateWithPassword(String userId, boolean isAdmin, String email, String username, String password,
+            Instant updatedAt, Instant optimisticLockUpdatedAt);
 
     /**
      * パスワードを除いたユーザ情報を更新する
@@ -45,10 +46,11 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, String
      * @param username ユーザ名
      * @param updatedAt 更新日時
      * @param optimisticLockUpdatedAt 楽観ロック用更新日時
+     * @return 更新件数
      */
     @Transactional
     @Modifying
     @Query("UPDATE UserAccount e SET e.isAdmin = :isAdmin, e.email = :email, e.username = :username, e.updatedAt = :updatedAt WHERE e.userId = :userId AND e.updatedAt = :optimisticLockUpdatedAt")
-    int updateWithoutPassword(String userId, boolean isAdmin, String email,
-            String username, Instant updatedAt, Instant optimisticLockUpdatedAt);
+    int updateWithoutPassword(String userId, boolean isAdmin, String email, String username,
+            Instant updatedAt, Instant optimisticLockUpdatedAt);
 }

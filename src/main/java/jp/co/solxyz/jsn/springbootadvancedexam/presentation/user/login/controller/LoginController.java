@@ -3,6 +3,9 @@ package jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.login.controll
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * ログインコントローラ
+ */
 @Controller
 public class LoginController {
 

@@ -39,6 +39,11 @@ public class BookLendingUseCase {
         bookLendingManager.returnBook(userId, isbn);
     }
 
+    /**
+     * 未返却書籍を未返却書籍概要に変換する
+     * @param book 未返却書籍
+     * @return 未返却書籍概要
+     */
     private UnreturnedBookSummary toSummary(UnreturnedBook book) {
         UnreturnedBookSummary summary = new UnreturnedBookSummary();
         summary.setIsbn(book.getIsbn());

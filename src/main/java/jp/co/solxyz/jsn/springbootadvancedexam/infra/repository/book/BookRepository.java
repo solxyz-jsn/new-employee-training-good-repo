@@ -31,6 +31,6 @@ public interface BookRepository extends JpaRepository<Book, String> {
     @Transactional
     @Modifying
     @Query("UPDATE Book b SET b.title = :title, b.author = :author, b.publisher = :publisher, b.stock = :stock, b.availableStock = :availableStock, b.description = :description, b.updatedAt = :updatedAt WHERE b.isbn = :isbn AND b.updatedAt = :optimisticLockUpdatedAt")
-    int updateBook(String isbn, String title, String author, String publisher, int stock, int availableStock, String description,
-            LocalDateTime updatedAt, LocalDateTime optimisticLockUpdatedAt);
+    int updateBook(String isbn, String title, String author, String publisher, int stock, int availableStock,
+            String description, LocalDateTime updatedAt, LocalDateTime optimisticLockUpdatedAt);
 }

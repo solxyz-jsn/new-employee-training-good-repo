@@ -65,6 +65,11 @@ public class BookCartUseCase {
                 .toList();
     }
 
+    /**
+     * 書籍エンティティを書籍概要に変換する
+     * @param book 書籍エンティティ
+     * @return 書籍概要
+     */
     private BookSummary toSummary(Book book) {
         return new BookSummary(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getAvailableStock(),
                 book.getDescription());

@@ -21,6 +21,10 @@ public class UserProfileCommand {
     /** パスワード */
     private String password;
 
+    /**
+     * 管理者フラグを設定する
+     * @param isAdmin 管理者フラグ
+     */
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
     }

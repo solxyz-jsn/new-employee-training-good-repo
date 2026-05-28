@@ -85,6 +85,10 @@ public class BookCoverUseCase {
         return coverUrls;
     }
 
+    /**
+     * openBDから書影URLを取得してキャッシュする
+     * @param isbnList 書影URLを取得するISBNリスト
+     */
     private void fetchAndCacheCovers(List<String> isbnList) {
         try {
             String responseBody = openBdRestClient.get()
@@ -111,6 +115,11 @@ public class BookCoverUseCase {
         }
     }
 
+    /**
+     * openBD APIの取得パスを作成する
+     * @param isbnList 取得対象のISBNリスト
+     * @return openBD APIの取得パス
+     */
     private String buildOpenBdPath(List<String> isbnList) {
         String joinedIsbns = isbnList.stream()
                 .map(isbn -> URLEncoder.encode(isbn, StandardCharsets.UTF_8))
@@ -119,6 +128,12 @@ public class BookCoverUseCase {
         return OPENBD_GET_PATH + "?isbn=" + joinedIsbns;
     }
 
+    /**
+     * openBDレスポンスから指定位置の書影URLを読み取る
+     * @param root openBDレスポンスのルートノード
+     * @param index ISBNリスト上の位置
+     * @return 書影URL。存在しない場合は空文字
+     */
     private String readCoverUrl(JsonNode root, int index) {
         if (!root.isArray() || root.size() <= index || root.get(index).isNull()) {
             return "";

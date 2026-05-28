@@ -54,7 +54,7 @@ public class AccountProfile {
     /**
      * リクエストマッピング時に参照される命名はsetIsAdminであるが
      * Dataアノテーションによって生成されるsetterはsetAdminになるため明示的に宣言している
-     * @param isAdmin
+     * @param isAdmin 管理者フラグ
      */
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;

@@ -59,6 +59,11 @@ public class BookListController {
         return mav;
     }
 
+    /**
+     * 書籍概要を画面表示用書籍モデルに変換する
+     * @param book 書籍概要
+     * @return 画面表示用書籍モデル
+     */
     private BookModel toBookModel(BookSummary book) {
         return new BookModel(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getAvailableStock(),
                 book.getDescription());

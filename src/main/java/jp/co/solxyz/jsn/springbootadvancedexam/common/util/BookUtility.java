@@ -1,9 +1,13 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.common.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * 書籍ユーティリティ
  */
-public class BookUtility {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BookUtility {
 
     /**
      * フォーマットされたISBNを取得する

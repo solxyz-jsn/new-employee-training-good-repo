@@ -26,6 +26,10 @@ public class UUIDGenerator {
         return generate();
     }
 
+    /**
+     * UUID文字列を生成する
+     * @return UUID文字列
+     */
     private String generate() {
         return UUID.randomUUID().toString();
     }

@@ -34,6 +34,10 @@ public class BookCoverCache {
         this(MAX_CACHE_SIZE);
     }
 
+    /**
+     * 最大キャッシュ数を指定して書影URLキャッシュを作成する
+     * @param maxCacheSize キャッシュできるISBN数
+     */
     public BookCoverCache(int maxCacheSize) {
         this.coverUrls = Collections.synchronizedMap(new LinkedHashMap<>(16, 0.75f, true) {
             @Override
