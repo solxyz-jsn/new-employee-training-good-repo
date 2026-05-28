@@ -4,7 +4,6 @@ import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.BookManagemen
 import jp.co.solxyz.jsn.springbootadvancedexam.app.admin.book.service.BookManagementService;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +18,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/management/book")
 @RequiredArgsConstructor
-@Slf4j
 public class BookManagementController {
 
     /**
@@ -37,16 +35,10 @@ public class BookManagementController {
         mav.addObject("activeMenu", "bookManagement");
         List<Book> books = bookManagementService.getAllBooks();
         List<BookManagementModel> displayedBookModels = new ArrayList<>();
-        try {
-            for (Book book : books) {
-                displayedBookModels.add(
-                        new BookManagementModel(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(),
-                                book.getStock(), book.getCreatedAt(), book.getUpdatedAt()));
-            }
-        } catch (IllegalArgumentException e) {
-            log.error("書籍情報の生成に失敗しました。", e);
-            mav.addObject("error", "書籍情報の生成に失敗しました。");
-            return mav;
+        for (Book book : books) {
+            displayedBookModels.add(
+                    new BookManagementModel(book.getIsbn(), book.getTitle(), book.getAuthor(), book.getPublisher(), book.getDescription(),
+                            book.getStock(), book.getCreatedAt(), book.getUpdatedAt()));
         }
 
         mav.addObject("books", displayedBookModels);

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -117,8 +117,8 @@ public class BookManagementControllerTest {
     }
 
     @Test
-    @DisplayName("ISBNが13桁の数字ではない場合、エラーメッセージのみ返る")
-    void shouldFailToDisplayBookListDueToError() {
+    @DisplayName("ISBNが13桁の数字ではない場合、IllegalArgumentExceptionが発生する")
+    void shouldThrowIllegalArgumentExceptionWhenIsbnIsInvalid() {
         Book book = new Book();
         book.setIsbn("test_isbn");
         book.setTitle("Test Book");
@@ -132,13 +132,11 @@ public class BookManagementControllerTest {
 
         when(service.getAllBooks()).thenReturn(List.of(book));
 
-        ModelAndView actual = controller.index();
+        assertThatThrownBy(() -> controller.index())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("引数には13桁の数字のみが使用できます");
 
-        verify(service, times(1)).getAllBooks();
-        assertThat(actual.getViewName()).isEqualTo("admin/book-management");
-        assertThat(actual.getModel().get("activeMenu")).isEqualTo("bookManagement");
-        assertThat(actual.getModel().get("books")).isNull();
-        assertThat(actual.getModel().get("error")).isEqualTo("書籍情報の生成に失敗しました。");
+        verify(service).getAllBooks();
     }
 
     private List<BookManagementModel> getBooks(ModelAndView modelAndView) {
