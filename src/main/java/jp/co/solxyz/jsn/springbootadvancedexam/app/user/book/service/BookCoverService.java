@@ -1,20 +1,16 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
-import java.net.URI;
 import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,28 +19,19 @@ import java.util.Map;
  * 書影取得サービス
  */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class BookCoverService {
 
     /**
-     * openBD API URL
+     * openBD APIの書籍取得パス
      */
-    private static final String OPENBD_API_URL = "https://api.openbd.jp/v1/get?isbn=";
+    private static final String OPENBD_GET_PATH = "/v1/get";
 
     /**
-     * 書影なしを表すキャッシュ値
+     * openBD API用RESTクライアント
      */
-    private static final String MISSING_COVER = "";
-
-    /**
-     * キャッシュできるISBN数
-     */
-    private static final int MAX_CACHE_SIZE = 500;
-
-    /**
-     * HTTPクライアント
-     */
-    private final HttpClient httpClient;
+    private final RestClient openBdRestClient;
 
     /**
      * JSONマッパー
@@ -54,26 +41,7 @@ public class BookCoverService {
     /**
      * ISBNごとの書影URLキャッシュ
      */
-    private final Map<String, String> coverCache;
-
-    /**
-     * コンストラクタ
-     * @param jsonMapper JSONマッパー
-     */
-    @Autowired
-    public BookCoverService(JsonMapper jsonMapper) {
-        this(HttpClient.newHttpClient(), jsonMapper, MAX_CACHE_SIZE);
-    }
-
-    BookCoverService(HttpClient httpClient, JsonMapper jsonMapper) {
-        this(httpClient, jsonMapper, MAX_CACHE_SIZE);
-    }
-
-    BookCoverService(HttpClient httpClient, JsonMapper jsonMapper, int maxCacheSize) {
-        this.httpClient = httpClient;
-        this.jsonMapper = jsonMapper;
-        this.coverCache = createCoverCache(maxCacheSize);
-    }
+    private final BookCoverCache bookCoverCache;
 
     /**
      * ISBNに対応する書影URLを取得
@@ -90,9 +58,9 @@ public class BookCoverService {
         Map<String, String> coverUrls = new LinkedHashMap<>();
         List<String> missingIsbns = normalizedIsbns.stream()
                 .filter(isbn -> {
-                    String coverUrl = coverCache.get(isbn);
+                    String coverUrl = bookCoverCache.get(isbn);
                     if (coverUrl != null) {
-                        if (!coverUrl.isBlank()) {
+                        if (bookCoverCache.hasCover(coverUrl)) {
                             coverUrls.put(isbn, coverUrl);
                         }
                         return false;
@@ -108,8 +76,8 @@ public class BookCoverService {
             if (coverUrls.containsKey(isbn)) {
                 return;
             }
-            String coverUrl = coverCache.get(isbn);
-            if (coverUrl != null && !coverUrl.isBlank()) {
+            String coverUrl = bookCoverCache.get(isbn);
+            if (bookCoverCache.hasCover(coverUrl)) {
                 coverUrls.put(isbn, coverUrl);
             }
         });
@@ -118,53 +86,46 @@ public class BookCoverService {
 
     private void fetchAndCacheCovers(List<String> isbnList) {
         try {
-            HttpRequest request = HttpRequest.newBuilder(buildOpenBdUri(isbnList))
-                    .timeout(Duration.ofSeconds(5))
-                    .GET()
-                    .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IOException("openBD returned status " + response.statusCode());
+            String responseBody = openBdRestClient.get()
+                    .uri(buildOpenBdPath(isbnList))
+                    .retrieve()
+                    .body(String.class);
+            if (responseBody == null) {
+                return;
             }
-
-            JsonNode root = jsonMapper.readTree(response.body());
+            JsonNode root = jsonMapper.readTree(responseBody);
             for (int index = 0; index < isbnList.size(); index++) {
                 String isbn = isbnList.get(index);
-                coverCache.put(isbn, readCoverUrl(root, index));
+                String coverUrl = readCoverUrl(root, index);
+                if (coverUrl.isBlank()) {
+                    bookCoverCache.putMissing(isbn);
+                } else {
+                    bookCoverCache.put(isbn, coverUrl);
+                }
             }
-        } catch (IOException e) {
+        } catch (RestClientException e) {
             log.warn("openBDから書影を取得できませんでした。", e);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            log.warn("openBDからの書影取得が中断されました。", e);
+        } catch (JacksonException e) {
+            log.warn("openBDのレスポンスを解析できませんでした。", e);
         }
     }
 
-    private URI buildOpenBdUri(List<String> isbnList) {
+    private String buildOpenBdPath(List<String> isbnList) {
         String joinedIsbns = isbnList.stream()
                 .map(isbn -> URLEncoder.encode(isbn, StandardCharsets.UTF_8))
                 .reduce((left, right) -> left + "," + right)
                 .orElse("");
-        return URI.create(OPENBD_API_URL + joinedIsbns);
-    }
-
-    private Map<String, String> createCoverCache(int maxCacheSize) {
-        return Collections.synchronizedMap(new LinkedHashMap<>(16, 0.75f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
-                return size() > maxCacheSize;
-            }
-        });
+        return OPENBD_GET_PATH + "?isbn=" + joinedIsbns;
     }
 
     private String readCoverUrl(JsonNode root, int index) {
         if (!root.isArray() || root.size() <= index || root.get(index).isNull()) {
-            return MISSING_COVER;
+            return "";
         }
 
         JsonNode cover = root.get(index).path("summary").path("cover");
         if (cover.isMissingNode() || cover.isNull() || cover.asString().isBlank()) {
-            return MISSING_COVER;
+            return "";
         }
         return cover.asString();
     }
