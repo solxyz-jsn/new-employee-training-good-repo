@@ -1,4 +1,4 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.converter.BooleanToIntegerConverter;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.converter.BooleanToIntegerConverter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

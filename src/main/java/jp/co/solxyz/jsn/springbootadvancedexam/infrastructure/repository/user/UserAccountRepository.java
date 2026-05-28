@@ -1,6 +1,6 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.user;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

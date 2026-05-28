@@ -1,10 +1,10 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.common.util.UUIDGenerator;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.BookCheckoutHistory;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.BookCheckoutHistory;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book.BookCheckoutHistoryRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

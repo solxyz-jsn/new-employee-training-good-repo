@@ -1,11 +1,11 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.converter.LocalDateTimeToInstantConverter;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.converter.LocalDateTimeToInstantConverter;
 import lombok.Data;
 
 import java.io.Serial;

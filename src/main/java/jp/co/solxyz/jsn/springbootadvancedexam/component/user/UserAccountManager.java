@@ -1,8 +1,8 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.user;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user.UserAccountRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book.BookCheckoutHistoryRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.user.UserAccountRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.common.util.PasswordUtility;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.converter;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

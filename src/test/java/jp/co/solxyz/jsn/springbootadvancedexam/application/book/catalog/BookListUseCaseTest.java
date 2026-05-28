@@ -1,7 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.application.book.catalog;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

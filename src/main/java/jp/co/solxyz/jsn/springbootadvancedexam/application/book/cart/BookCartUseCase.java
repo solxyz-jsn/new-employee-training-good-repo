@@ -3,7 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.book.cart;
 import jp.co.solxyz.jsn.springbootadvancedexam.application.book.catalog.BookSummary;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending.BookLendingManager;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

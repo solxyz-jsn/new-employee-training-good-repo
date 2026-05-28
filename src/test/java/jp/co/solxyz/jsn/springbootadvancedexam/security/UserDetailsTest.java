@@ -1,6 +1,6 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.security;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

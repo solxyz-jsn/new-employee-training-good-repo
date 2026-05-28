@@ -1,7 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.application.user.management;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.component.user.UserAccountManager;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
 import jp.co.solxyz.jsn.springbootadvancedexam.common.util.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,6 +1,6 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -1,9 +1,9 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.user;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.BookCheckoutHistory;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user.UserAccountRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.BookCheckoutHistory;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book.BookCheckoutHistoryRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.user.UserAccountRepository;
 import jp.co.solxyz.jsn.springbootadvancedexam.common.util.PasswordUtility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

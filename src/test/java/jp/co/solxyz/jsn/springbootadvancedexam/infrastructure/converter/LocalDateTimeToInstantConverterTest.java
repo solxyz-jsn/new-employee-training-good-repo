@@ -1,4 +1,4 @@
-package jp.co.solxyz.jsn.springbootadvancedexam.infra.converter;
+package jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.converter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

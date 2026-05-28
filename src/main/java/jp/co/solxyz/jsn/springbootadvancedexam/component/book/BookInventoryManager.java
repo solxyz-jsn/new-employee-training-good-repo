@@ -1,7 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.book;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.book.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

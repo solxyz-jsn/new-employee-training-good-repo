@@ -1,7 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.security;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.user.UserAccount;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.user.UserAccountRepository;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.user.UserAccount;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.repository.user.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.userdetails.UserDetailsService;

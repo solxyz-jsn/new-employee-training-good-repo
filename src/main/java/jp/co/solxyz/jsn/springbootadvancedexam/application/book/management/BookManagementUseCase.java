@@ -2,7 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.book.management;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookMetadataManager;
-import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
+import jp.co.solxyz.jsn.springbootadvancedexam.infrastructure.entity.book.Book;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
