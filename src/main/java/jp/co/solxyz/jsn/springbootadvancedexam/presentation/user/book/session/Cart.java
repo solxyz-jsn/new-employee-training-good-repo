@@ -1,6 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session;
 
 import lombok.Data;
+import org.jspecify.annotations.NullUnmarked;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.io.Serializable;
  * セッションに保存するカート情報
  */
 @Data
+@NullUnmarked
 public class Cart implements Serializable {
     /**
      * シリアルバージョンUID

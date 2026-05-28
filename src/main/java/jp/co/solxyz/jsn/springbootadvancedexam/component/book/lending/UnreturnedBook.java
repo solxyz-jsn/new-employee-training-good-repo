@@ -1,6 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.book.lending;
 
 import lombok.Data;
+import org.jspecify.annotations.NullUnmarked;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
  * 未返却書籍
  */
 @Data
+@NullUnmarked
 public class UnreturnedBook {
     /** ISBN */
     private String isbn;

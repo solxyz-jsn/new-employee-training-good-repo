@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.infra.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class LocalDateTimeToInstantConverter implements AttributeConverter<Local
      * @return UNIX時間
      */
     @Override
-    public Instant convertToDatabaseColumn(LocalDateTime attribute) {
+    public Instant convertToDatabaseColumn(@Nullable LocalDateTime attribute) {
         return Optional.ofNullable(attribute)
                 .map(attr -> attr.atZone(ZoneId.of("Asia/Tokyo")).toInstant())
                 .orElse(Instant.EPOCH);
@@ -33,7 +34,7 @@ public class LocalDateTimeToInstantConverter implements AttributeConverter<Local
      * @return LocalDateTime
      */
     @Override
-    public LocalDateTime convertToEntityAttribute(Instant dbData) {
+    public LocalDateTime convertToEntityAttribute(@Nullable Instant dbData) {
         return Optional.ofNullable(dbData)
                 .map(data -> LocalDateTime.ofInstant(data, ZoneId.of("Asia/Tokyo")))
                 .orElse(LocalDateTime.of(1970, 1, 1, 0, 0));

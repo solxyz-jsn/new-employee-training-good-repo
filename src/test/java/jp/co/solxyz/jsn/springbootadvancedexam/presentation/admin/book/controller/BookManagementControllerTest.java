@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -111,7 +112,7 @@ public class BookManagementControllerTest {
     }
 
     private List<BookManagementModel> getBooks(ModelAndView modelAndView) {
-        Object books = modelAndView.getModel().get("books");
+        Object books = Objects.requireNonNull(modelAndView.getModel().get("books"));
         assertThat(books).isInstanceOf(List.class);
         return ((List<?>) books).stream()
                 .map(BookManagementModel.class::cast)

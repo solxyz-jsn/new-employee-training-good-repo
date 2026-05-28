@@ -5,6 +5,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.application.book.lending.Unreturn
 import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.model.UnreturnedBookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -106,7 +107,7 @@ public class BookReturnController {
      * @param rentalAt 貸出日時
      * @return 返却期限日時
      */
-    private LocalDateTime calculateDueAt(LocalDateTime rentalAt) {
+    private @Nullable LocalDateTime calculateDueAt(@Nullable LocalDateTime rentalAt) {
         if (rentalAt == null) {
             return null;
         }
@@ -118,7 +119,7 @@ public class BookReturnController {
      * @param dueAt 返却期限日時
      * @return 返却期限日までの残日数
      */
-    private long calculateRemainingDays(LocalDateTime dueAt) {
+    private long calculateRemainingDays(@Nullable LocalDateTime dueAt) {
         if (dueAt == null) {
             return 0;
         }

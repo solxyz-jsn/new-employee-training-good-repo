@@ -1,6 +1,7 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.application.book.catalog.cache;
 
 import org.springframework.stereotype.Component;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -52,7 +53,7 @@ public class BookCoverCache {
      * @param isbn ISBN
      * @return 書影URL
      */
-    public String get(String isbn) {
+    public @Nullable String get(String isbn) {
         return coverUrls.get(isbn);
     }
 
@@ -78,7 +79,7 @@ public class BookCoverCache {
      * @param coverUrl 書影URL
      * @return 書影URLが空でなければtrue
      */
-    public boolean hasCover(String coverUrl) {
+    public boolean hasCover(@Nullable String coverUrl) {
         return coverUrl != null && !coverUrl.isBlank();
     }
 }

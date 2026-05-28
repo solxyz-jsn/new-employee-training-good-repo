@@ -24,6 +24,7 @@ import org.springframework.validation.ObjectError;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -108,7 +109,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(0)).addUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
     }
 
     @Test
@@ -131,8 +132,8 @@ class UserManagementApiControllerTest {
 
         verify(service, times(0)).addUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
-        assertThat(response.getBody().get(1).getDefaultMessage()).isEqualTo("パスワードが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(1).getDefaultMessage()).isEqualTo("パスワードが不正です。");
     }
 
     @Test
@@ -151,7 +152,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).addUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("既に登録されているメールアドレスです。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("既に登録されているメールアドレスです。");
     }
 
     @Test
@@ -170,7 +171,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).addUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("ユーザ情報の登録に失敗しました。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("ユーザ情報の登録に失敗しました。");
     }
 
     @Test
@@ -210,7 +211,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(0)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
     }
 
     @Test
@@ -233,8 +234,8 @@ class UserManagementApiControllerTest {
 
         verify(service, times(0)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
-        assertThat(response.getBody().get(1).getDefaultMessage()).isEqualTo("パスワードが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("メールアドレスが不正です。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(1).getDefaultMessage()).isEqualTo("パスワードが不正です。");
     }
 
     @Test
@@ -253,7 +254,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("ユーザがみつかりません。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("ユーザがみつかりません。");
     }
 
     @Test
@@ -272,7 +273,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("他の管理者によって更新されました。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("他の管理者によって更新されました。");
     }
 
     @Test
@@ -291,7 +292,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("既に登録されているメールアドレスです。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("既に登録されているメールアドレスです。");
     }
 
     @Test
@@ -311,7 +312,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).updateUser(any(UserProfileCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("ユーザ情報の更新に失敗しました。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("ユーザ情報の更新に失敗しました。");
     }
 
     @Test
@@ -360,7 +361,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).deleteUser(expectedUserId);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("ユーザが見つかりません。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("ユーザが見つかりません。");
     }
 
     @Test
@@ -385,7 +386,7 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).deleteUser(expectedUserId.getUserId());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("削除に失敗しました。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("削除に失敗しました。");
 
     }
 
@@ -411,6 +412,6 @@ class UserManagementApiControllerTest {
 
         verify(service, times(1)).deleteUser(expectedUserId.getUserId());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().get(0).getDefaultMessage()).isEqualTo("ユーザ情報の削除に失敗しました。");
+        assertThat(Objects.requireNonNull(response.getBody()).get(0).getDefaultMessage()).isEqualTo("ユーザ情報の削除に失敗しました。");
     }
 }

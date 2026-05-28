@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -100,6 +101,6 @@ class UserManagementTemplateTest {
     private static Element requireElement(Document document, String cssQuery) {
         Element element = document.selectFirst(cssQuery);
         assertThat(cssQuery, element, notNullValue());
-        return element;
+        return Objects.requireNonNull(element);
     }
 }

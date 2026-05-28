@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.book.management;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NullUnmarked;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NullUnmarked
 public class BookManagementSummary {
 
     /** ISBN */

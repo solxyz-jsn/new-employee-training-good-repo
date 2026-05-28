@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * 文字列ユーティリティ
  */
@@ -22,6 +24,6 @@ public class PasswordUtility {
      * @return ハッシュ化されたパスワード
      */
     public String hashPassword(String password) {
-        return passwordEncoder.encode(password);
+        return Objects.requireNonNull(passwordEncoder.encode(password));
     }
 }

@@ -2,12 +2,14 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.user.management;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * ユーザ管理ユースケース入力
  */
 @Data
 @NoArgsConstructor
+@NullUnmarked
 public class UserProfileCommand {
 
     /** ユーザID */

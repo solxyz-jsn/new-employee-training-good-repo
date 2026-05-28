@@ -3,6 +3,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.book.catalog;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * 利用者向け書籍情報
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NullUnmarked
 public class BookSummary {
 
     /** ISBN */

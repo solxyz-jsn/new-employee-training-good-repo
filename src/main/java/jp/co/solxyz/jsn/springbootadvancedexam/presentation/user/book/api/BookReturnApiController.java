@@ -5,6 +5,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.application.book.lending.BookLend
 import jp.co.solxyz.jsn.springbootadvancedexam.security.MyUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +37,8 @@ public class BookReturnApiController {
      * @return レスポンス
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> returnBook(@RequestBody ReturnBookIsbn returnBookIsbn,
-            @AuthenticationPrincipal MyUserDetails userDetails) {
+    public ResponseEntity<Void> returnBook(@Nullable @RequestBody ReturnBookIsbn returnBookIsbn,
+            @Nullable @AuthenticationPrincipal MyUserDetails userDetails) {
         if (returnBookIsbn == null || returnBookIsbn.getIsbn() == null || userDetails == null) {
             log.info("ISBN or userDetails is null");
             return ResponseEntity.badRequest().build();

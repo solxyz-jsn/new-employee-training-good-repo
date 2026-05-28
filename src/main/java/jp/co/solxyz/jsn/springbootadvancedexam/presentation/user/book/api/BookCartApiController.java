@@ -5,6 +5,7 @@ import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session.Ca
 import jp.co.solxyz.jsn.springbootadvancedexam.presentation.user.book.session.CartSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +34,7 @@ public class BookCartApiController {
      * @return レスポンス
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> add(@RequestBody CartIsbn cartIsbn) {
+    public ResponseEntity<Integer> add(@Nullable @RequestBody CartIsbn cartIsbn) {
         if (cartIsbn == null || cartIsbn.getIsbn() == null) {
             log.info("ISBN is null");
             return ResponseEntity.badRequest().build();
@@ -51,7 +52,7 @@ public class BookCartApiController {
      * @return レスポンス
      */
     @DeleteMapping
-    public ResponseEntity<Void> delete(@RequestBody CartIsbn cartIsbn) {
+    public ResponseEntity<Void> delete(@Nullable @RequestBody CartIsbn cartIsbn) {
         if (cartIsbn == null || cartIsbn.getIsbn() == null) {
             log.info("ISBN is null");
             return ResponseEntity.badRequest().build();

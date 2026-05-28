@@ -21,6 +21,7 @@ import org.springframework.validation.ObjectError;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -134,7 +135,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).addBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -149,7 +150,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).addBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(ObjectError::getDefaultMessage).toList().get(0)).isEqualTo(
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(ObjectError::getDefaultMessage).toList().get(0)).isEqualTo(
                 "書籍情報の登録に失敗しました。");
     }
 
@@ -164,7 +165,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).updateBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -178,7 +179,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).updateBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -192,7 +193,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).updateBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -207,7 +208,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).updateBook(any(BookManagementCommand.class));
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo(
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo(
                 "書籍情報の更新に失敗しました。");
     }
 
@@ -222,7 +223,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).deleteBook(isbn);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -236,7 +237,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).deleteBook(isbn);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo("test error");
     }
 
     @Test
@@ -251,7 +252,7 @@ public class BookManagementApiControllerTest {
 
         verify(service, times(1)).deleteBook(isbn);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo(
+        assertThat(Objects.requireNonNull(response.getBody()).stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList().get(0)).isEqualTo(
                 "書籍情報の削除に失敗しました。");
     }
 }

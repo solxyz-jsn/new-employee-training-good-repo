@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -304,9 +305,9 @@ class BookReturnControllerTest {
     }
 
     private List<UnreturnedBookModel> getDisplayBooks(MvcResult result) {
-        Object displayBooks = result.getModelAndView()
+        Object displayBooks = Objects.requireNonNull(Objects.requireNonNull(result.getModelAndView())
                 .getModel()
-                .get("displayBooks");
+                .get("displayBooks"));
         assertThat(displayBooks).isInstanceOf(List.class);
         return ((List<?>) displayBooks).stream()
                 .map(UnreturnedBookModel.class::cast)

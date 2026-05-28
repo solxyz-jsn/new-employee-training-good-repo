@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.infra.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
+import org.jspecify.annotations.Nullable;
 
 /**
  * BooleanとIntegerの変換を行うコンバータ
@@ -15,7 +16,7 @@ public class BooleanToIntegerConverter implements AttributeConverter<Boolean, In
      * @return 変換後のInteger
      */
     @Override
-    public Integer convertToDatabaseColumn(Boolean attribute) {
+    public Integer convertToDatabaseColumn(@Nullable Boolean attribute) {
         if (Boolean.TRUE.equals(attribute)) {
             return 1;
         } else {
@@ -30,7 +31,7 @@ public class BooleanToIntegerConverter implements AttributeConverter<Boolean, In
      * @return 変換後のBoolean
      */
     @Override
-    public Boolean convertToEntityAttribute(Integer dbData) {
+    public Boolean convertToEntityAttribute(@Nullable Integer dbData) {
         return dbData != null && dbData.equals(1);
     }
 }

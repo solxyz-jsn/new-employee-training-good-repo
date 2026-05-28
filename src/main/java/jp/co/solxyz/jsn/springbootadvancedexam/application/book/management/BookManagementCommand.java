@@ -2,12 +2,14 @@ package jp.co.solxyz.jsn.springbootadvancedexam.application.book.management;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.NullUnmarked;
 
 /**
  * 書籍管理ユースケース入力
  */
 @Data
 @NoArgsConstructor
+@NullUnmarked
 public class BookManagementCommand {
 
     /** ISBN */
