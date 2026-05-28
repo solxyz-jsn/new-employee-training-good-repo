@@ -40,7 +40,7 @@ public class BookCartApiController {
      */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Integer> add(@RequestBody CartIsbn cartIsbn) {
-        if (cartIsbn.getIsbn() == null) {
+        if (cartIsbn == null || cartIsbn.getIsbn() == null) {
             log.info("ISBN is null");
             return ResponseEntity.badRequest().build();
         }
@@ -58,7 +58,7 @@ public class BookCartApiController {
      */
     @DeleteMapping
     public ResponseEntity<Void> delete(@RequestBody CartIsbn cartIsbn) {
-        if (cartIsbn.getIsbn() == null) {
+        if (cartIsbn == null || cartIsbn.getIsbn() == null) {
             log.info("ISBN is null");
             return ResponseEntity.badRequest().build();
         }

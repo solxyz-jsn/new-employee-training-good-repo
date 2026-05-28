@@ -9,10 +9,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 /**
  * ユーザ管理サービス
@@ -25,13 +27,19 @@ public class UserManagementService {
      * ユーザアカウントリポジトリ
      */
     private final UserAccountManager userAccountManager;
+    /** UUID生成クラス */
+    private final UUIDGenerator uuidGenerator;
+    /** 現在日時取得用Clock */
+    private final Clock clock;
 
     /**
      * コンストラクタ
      * @param userAccountManager ユーザアカウントリポジトリ
      */
-    public UserManagementService(UserAccountManager userAccountManager) {
+    public UserManagementService(UserAccountManager userAccountManager, UUIDGenerator uuidGenerator, Clock clock) {
         this.userAccountManager = userAccountManager;
+        this.uuidGenerator = uuidGenerator;
+        this.clock = clock;
     }
 
     /**
@@ -58,12 +66,12 @@ public class UserManagementService {
      */
     public void addUser(AccountProfile newUserModel) {
         UserAccount userAccount = new UserAccount();
-        userAccount.setUserId(UUIDGenerator.generateUserId());
+        userAccount.setUserId(uuidGenerator.generateUserId());
         userAccount.setIsAdmin(newUserModel.isAdmin());
         userAccount.setEmail(newUserModel.getEmail());
         userAccount.setUsername(newUserModel.getUserName());
         userAccount.setPassword(newUserModel.getPassword());
-        userAccount.setUpdatedAt(Instant.now());
+        userAccount.setUpdatedAt(Instant.now(clock));
 
         userAccountManager.addUser(userAccount);
     }
@@ -80,9 +88,9 @@ public class UserManagementService {
         updatedUserAccount.setEmail(updatedUserModel.getEmail());
         updatedUserAccount.setUsername(updatedUserModel.getUserName());
         updatedUserAccount.setPassword(updatedUserModel.getPassword());
-        updatedUserAccount.setUpdatedAt(Instant.now());
+        updatedUserAccount.setUpdatedAt(Instant.now(clock));
 
-        if (updatedUserAccount.getPassword().isEmpty()) {
+        if (Objects.toString(updatedUserAccount.getPassword(), "").isEmpty()) {
             // パスワードが空の場合はパスワードを含めない
             userAccountManager.updateUserWithoutPassword(updatedUserAccount, currentUserAccountDto.getUpdatedAt());
         } else {

@@ -4,10 +4,10 @@ import jp.co.solxyz.jsn.springbootadvincedexam.app.admin.book.json.BookDetail;
 import jp.co.solxyz.jsn.springbootadvincedexam.component.book.BookInventoryManager;
 import jp.co.solxyz.jsn.springbootadvincedexam.component.book.BookMetadataManager;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.book.Book;
-import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookCheckoutHistoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,14 +25,17 @@ public class BookManagementService {
 
     /** 書籍メタデータマネージャー */
     private final BookMetadataManager bookMetadataManager;
+    /** 現在日時取得用Clock */
+    private final Clock clock;
 
     /**
      * コンストラクタ
      * @param bookInventoryManager 書籍サービスビジネスロジック
      */
-    public BookManagementService(BookInventoryManager bookInventoryManager, BookMetadataManager bookMetadataManager, BookCheckoutHistoryRepository bookCheckoutHistoryRepository) {
+    public BookManagementService(BookInventoryManager bookInventoryManager, BookMetadataManager bookMetadataManager, Clock clock) {
         this.bookInventoryManager = bookInventoryManager;
         this.bookMetadataManager = bookMetadataManager;
+        this.clock = clock;
     }
 
     /**
@@ -56,8 +59,9 @@ public class BookManagementService {
         book.setDescription(addBook.getDescription());
         book.setStock(addBook.getStock());
         book.setAvailableStock(addBook.getStock());
-        book.setCreatedAt(LocalDateTime.now());
-        book.setUpdatedAt(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now(clock);
+        book.setCreatedAt(now);
+        book.setUpdatedAt(now);
 
         bookMetadataManager.registerBook(book);
     }
@@ -79,7 +83,7 @@ public class BookManagementService {
         book.setDescription(updatedBook.getDescription());
         book.setStock(updatedBook.getStock());
         book.setAvailableStock(currentBook.getAvailableStock() + (updatedBook.getStock() - currentBook.getStock()));
-        book.setUpdatedAt(LocalDateTime.now());
+        book.setUpdatedAt(LocalDateTime.now(clock));
 
         bookMetadataManager.updateBook(book, currentBook.getUpdatedAt());
     }

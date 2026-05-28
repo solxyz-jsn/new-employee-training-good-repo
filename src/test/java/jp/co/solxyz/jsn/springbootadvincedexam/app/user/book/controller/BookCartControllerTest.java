@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doThrow;
@@ -185,6 +186,29 @@ class BookCartControllerTest {
 
         when(cartSession.getCartList()).thenReturn(List.of(cart));
         doThrow(DataAccessResourceFailureException.class).when(bookCartService).checkout(USER_ID, List.of(cart));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.view().name("user/book-cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("activeMenu", "cart"))
+                .andExpect(MockMvcResultMatchers.model().attribute("cartCount", 1))
+                .andExpect(MockMvcResultMatchers.model().attribute("returnDueDays", 14))
+                .andExpect(MockMvcResultMatchers.model().attributeExists("returnDueDateText"))
+                .andExpect(MockMvcResultMatchers.model().attribute("errorMessage", "処理中にエラーが発生しました。"));
+
+        verify(bookCartService, times(1)).checkout(expectedUserId, List.of(cart));
+    }
+
+    @Test
+    @DisplayName("チェックアウト時に存在しないISBNが含まれる場合、エラーが返される")
+    void shouldReturnErrorWhenCheckoutContainsNonexistentIsbn() throws Exception {
+        String expectedUserId = "user1";
+
+        Cart cart = new Cart();
+        cart.setIsbn("1234567890123");
+
+        when(cartSession.getCartList()).thenReturn(List.of(cart));
+        doThrow(NoSuchElementException.class).when(bookCartService).checkout(USER_ID, List.of(cart));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/book/cart"))
                 .andExpect(MockMvcResultMatchers.status().isOk())

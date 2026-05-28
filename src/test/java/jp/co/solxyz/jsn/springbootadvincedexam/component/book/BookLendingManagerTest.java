@@ -5,25 +5,24 @@ import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.book.BookCheckoutHistory;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookRepository;
+import jp.co.solxyz.jsn.springbootadvincedexam.util.UUIDGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,18 +46,27 @@ public class BookLendingManagerTest {
     @Mock
     private BookCheckoutHistoryRepository bookCheckoutHistoryRepository;
 
+    @Mock
+    private UUIDGenerator uuidGenerator;
+
+    @Mock
+    private Clock clock;
+
     private final LocalDateTime TEST_TIME = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
+    private final ZoneId TEST_ZONE = ZoneId.systemDefault();
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
+        when(clock.instant()).thenReturn(TEST_TIME.atZone(TEST_ZONE).toInstant());
+        when(clock.getZone()).thenReturn(TEST_ZONE);
+        when(uuidGenerator.generateRentalId()).thenReturn("00000000-0000-0000-0000-000000000000");
     }
 
     @Test
     @DisplayName("チェックアウトが正常に終了する")
     void shouldCheckoutSuccessfully() {
         String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         BookCheckoutHistory expectedBookCheckoutHistory = new BookCheckoutHistory();
@@ -105,28 +113,36 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(Collections.emptyList());
         when(bookCheckoutHistoryRepository.saveAll(rentalTargetCheckoutHistoryList)).thenReturn(rentalTargetCheckoutHistoryList);
 
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class);
-                MockedStatic<LocalDateTime> mockLocalDateTime = Mockito.mockStatic(LocalDateTime.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-            mockLocalDateTime.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, List.of(book.getIsbn()));
 
-            List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, List.of(book.getIsbn()));
-
-            assertThat(notCheckoutBooks).isEmpty();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        assertThat(notCheckoutBooks).isEmpty();
 
         verify(bookRepository, times(1)).saveAll(expectedBookList);
         verify(bookCheckoutHistoryRepository, times(1)).saveAll(expectedBookCheckoutHistoryList);
     }
 
     @Test
+    @DisplayName("存在しないISBNを借りようとした場合、NoSuchElementExceptionが発生する")
+    void shouldThrowNoSuchElementExceptionWhenCheckoutBookDoesNotExist() {
+        String userId = "userId";
+        List<String> isbnList = List.of("1234567890123");
+
+        when(bookRepository.findAllById(isbnList)).thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> bookLendingManager.checkout(userId, isbnList))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("ISBNの一致する書籍が存在しません。");
+
+        verify(bookRepository, times(1)).findAllById(isbnList);
+        verify(bookCheckoutHistoryRepository, never()).findUnreturnedBooksByUserId(userId);
+        verify(bookRepository, never()).saveAll(any());
+        verify(bookCheckoutHistoryRepository, never()).saveAll(any());
+    }
+
+    @Test
     @DisplayName("複数の書籍を借りようとしたとき、一部がすでに借りている書籍と在庫のない書籍だった場合、それらは借りれなかった本として返される")
     void shouldReturnBooksWhenSomeBooksAreAlreadyCheckedOutOrStockIsNotEnough() {
         String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         BookCheckoutHistory checkoutHistory = new BookCheckoutHistory();
@@ -215,17 +231,8 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(userRentalBookList);
         when(bookCheckoutHistoryRepository.saveAll(rentalTargetCheckoutHistoryList)).thenReturn(Collections.emptyList());
 
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class);
-                MockedStatic<LocalDateTime> mockLocalDateTime = Mockito.mockStatic(LocalDateTime.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-            mockLocalDateTime.when(LocalDateTime::now).thenReturn(TEST_TIME);
-
-            List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, isbnList);
-            assertThat(notCheckoutBooks).isEqualTo(notCheckoutBookList);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, isbnList);
+        assertThat(notCheckoutBooks).isEqualTo(notCheckoutBookList);
 
         verify(bookRepository, times(1)).findAllById(isbnList);
         verify(bookRepository, times(1)).saveAll(expectedBookList);
@@ -237,8 +244,6 @@ public class BookLendingManagerTest {
     @Test
     @DisplayName("すでに借りている書籍を借りようとした場合、借りれなかった本として返される")
     void shouldReturnBookWhenAlreadyCheckedOut() {
-        String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         Book expectedBook = new Book();
@@ -274,25 +279,17 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(rentalUserBookList);
         when(bookCheckoutHistoryRepository.saveAll(Collections.emptyList())).thenReturn(Collections.emptyList());
 
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class);
-                MockedStatic<LocalDateTime> mockLocalDateTime = Mockito.mockStatic(LocalDateTime.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-            mockLocalDateTime.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, isbnList);
 
-            List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, isbnList);
-
-            verify(bookRepository, times(1)).saveAll(List.of(expectedBook));
-            verify(bookCheckoutHistoryRepository, times(1)).saveAll(Collections.emptyList());
-            assertThat(notCheckoutBooks).hasSize(1);
-            assertThat(notCheckoutBooks.get(0)).isEqualTo(expectedBook);
-        }
+        verify(bookRepository, times(1)).saveAll(List.of(expectedBook));
+        verify(bookCheckoutHistoryRepository, times(1)).saveAll(Collections.emptyList());
+        assertThat(notCheckoutBooks).hasSize(1);
+        assertThat(notCheckoutBooks.get(0)).isEqualTo(expectedBook);
     }
 
     @Test
     @DisplayName("借りようとした書籍の在庫がない場合、借りれなかった書籍として返される")
     void shouldReturnBookWhenStockIsNotEnough() {
-        String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         Book expectedBook = new Book();
@@ -324,26 +321,19 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(Collections.emptyList());
         when(bookCheckoutHistoryRepository.saveAll(Collections.emptyList())).thenReturn(Collections.emptyList());
 
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class);
-                MockedStatic<LocalDateTime> mockLocalDateTime = Mockito.mockStatic(LocalDateTime.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-            mockLocalDateTime.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, List.of(book.getIsbn()));
 
-            List<Book> notCheckoutBooks = bookLendingManager.checkout(userId, List.of(book.getIsbn()));
-
-            verify(bookRepository, times(1)).saveAll(List.of(expectedBook));
-            verify(bookCheckoutHistoryRepository, times(1)).saveAll(Collections.emptyList());
-            assertThat(notCheckoutBooks).hasSize(1);
-            assertThat(notCheckoutBooks.get(0).getIsbn()).isEqualTo(expectedBook.getIsbn());
-            assertThat(notCheckoutBooks.get(0).getAvailableStock()).isEqualTo(expectedBook.getAvailableStock());
-        }
+        verify(bookRepository, times(1)).saveAll(List.of(expectedBook));
+        verify(bookCheckoutHistoryRepository, times(1)).saveAll(Collections.emptyList());
+        assertThat(notCheckoutBooks).hasSize(1);
+        assertThat(notCheckoutBooks.get(0).getIsbn()).isEqualTo(expectedBook.getIsbn());
+        assertThat(notCheckoutBooks.get(0).getAvailableStock()).isEqualTo(expectedBook.getAvailableStock());
     }
 
     @Test
     @DisplayName("チェックアウト履歴の登録に失敗した場合、DataAccessExceptionのサブクラスが発生する")
     void shouldThrowDataAccessExceptionWhenFailedToSaveCheckoutHistory() {
         String stringUUID = "00000000-0000-0000-0000-000000000000";
-        UUID uuid = UUID.fromString(stringUUID);
         String userId = "userId";
 
         Book expectedBook = new Book();
@@ -370,11 +360,6 @@ public class BookLendingManagerTest {
         book.setUpdatedAt(TEST_TIME);
         List<Book> rentalTargetBookList = List.of(book);
 
-        BookCheckoutHistory expectedCheckoutHistory = new BookCheckoutHistory();
-        expectedCheckoutHistory.setRentalId(stringUUID);
-        expectedCheckoutHistory.setUserId(userId);
-        expectedCheckoutHistory.setIsbn(book.getIsbn());
-
         List<String> isbnList = List.of(book.getIsbn());
 
         when(bookRepository.findAllById(isbnList)).thenReturn(rentalTargetBookList);
@@ -392,33 +377,24 @@ public class BookLendingManagerTest {
         }))).thenThrow(
                 new DataAccessResourceFailureException("DBへの接続ができませんでした。"));
 
-        LocalDateTime beforeCheckout = LocalDateTime.now();
-        try (MockedStatic<UUID> mockUUID = Mockito.mockStatic(UUID.class)) {
-            mockUUID.when(UUID::randomUUID).thenReturn(uuid);
-
-            assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
-                    .isInstanceOf(DataAccessException.class)
-                    .hasMessageContaining("DBへの接続ができませんでした。");
-        }
-        LocalDateTime afterCheckout = LocalDateTime.now();
+        assertThatThrownBy(() -> bookLendingManager.checkout(userId, List.of(book.getIsbn())))
+                .isInstanceOf(DataAccessException.class)
+                .hasMessageContaining("DBへの接続ができませんでした。");
 
         verify(bookRepository, times(1)).findAllById(isbnList);
         verify(bookRepository, times(1)).saveAll(expectedBookList);
         verify(bookCheckoutHistoryRepository, times(1)).findUnreturnedBooksByUserId(userId);
 
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        ArgumentCaptor<List<BookCheckoutHistory>> checkoutHistoriesCaptor =
-                ArgumentCaptor.forClass((Class) List.class);
-        verify(bookCheckoutHistoryRepository, times(1)).saveAll(checkoutHistoriesCaptor.capture());
-
-        List<BookCheckoutHistory> savedCheckoutHistories = checkoutHistoriesCaptor.getValue();
-        assertThat(savedCheckoutHistories).hasSize(1);
-        BookCheckoutHistory savedCheckoutHistory = savedCheckoutHistories.get(0);
-        assertThat(savedCheckoutHistory)
-                .usingRecursiveComparison()
-                .ignoringFields("rentalAt")
-                .isEqualTo(expectedCheckoutHistory);
-        assertThat(savedCheckoutHistory.getRentalAt()).isBetween(beforeCheckout, afterCheckout);
+        verify(bookCheckoutHistoryRepository, times(1)).saveAll(argThat((List<BookCheckoutHistory> histories) -> {
+            if (histories.size() != 1) {
+                return false;
+            }
+            BookCheckoutHistory savedCheckoutHistory = histories.get(0);
+            return stringUUID.equals(savedCheckoutHistory.getRentalId())
+                    && userId.equals(savedCheckoutHistory.getUserId())
+                    && book.getIsbn().equals(savedCheckoutHistory.getIsbn())
+                    && TEST_TIME.equals(savedCheckoutHistory.getRentalAt());
+        }));
     }
 
     @Test
@@ -540,7 +516,6 @@ public class BookLendingManagerTest {
         try {
             bookLendingManager.returnBook(userId, book.getIsbn());
         } catch (Exception e) {
-            e.printStackTrace();
             fail();
         }
 

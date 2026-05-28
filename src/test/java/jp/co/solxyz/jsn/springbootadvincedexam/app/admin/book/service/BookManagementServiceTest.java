@@ -10,11 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,11 +38,17 @@ public class BookManagementServiceTest {
     @Mock
     private BookMetadataManager bookMetadataManager;
 
+    @Mock
+    private Clock clock;
+
     private final LocalDateTime TEST_TIME = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
+    private final ZoneId TEST_ZONE = ZoneId.systemDefault();
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
+        when(clock.instant()).thenReturn(TEST_TIME.atZone(TEST_ZONE).toInstant());
+        when(clock.getZone()).thenReturn(TEST_ZONE);
     }
 
     @Test
@@ -146,8 +152,7 @@ public class BookManagementServiceTest {
         form.setDescription("Test Description");
         form.setStock(10);
 
-        try (MockedStatic<LocalDateTime> mocked = Mockito.mockStatic(LocalDateTime.class)) {
-            mocked.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        try {
             service.addBook(form);
         } catch (Exception e) {
             fail();
@@ -190,8 +195,7 @@ public class BookManagementServiceTest {
         when(bookInventoryManager.getBookByIsbn(form.getIsbn())).thenReturn(currentBook);
         doNothing().when(bookInventoryManager).compareInputStockLowerThanCurrent(form.getStock(), currentBook.getAvailableStock());
 
-        try (MockedStatic<LocalDateTime> mocked = Mockito.mockStatic(LocalDateTime.class)) {
-            mocked.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        try {
             service.updateBook(form);
         } catch (Exception e) {
             fail();
@@ -235,8 +239,7 @@ public class BookManagementServiceTest {
         when(bookInventoryManager.getBookByIsbn(form.getIsbn())).thenReturn(currentBook);
         doNothing().when(bookInventoryManager).compareInputStockLowerThanCurrent(form.getStock(), currentBook.getAvailableStock());
 
-        try (MockedStatic<LocalDateTime> mocked = Mockito.mockStatic(LocalDateTime.class)) {
-            mocked.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        try {
             service.updateBook(form);
         } catch (Exception e) {
             fail();
@@ -271,8 +274,7 @@ public class BookManagementServiceTest {
         doThrow(IllegalArgumentException.class).when(bookInventoryManager)
                 .compareInputStockLowerThanCurrent(form.getStock(), currentBook.getAvailableStock());
 
-        try (MockedStatic<LocalDateTime> mocked = Mockito.mockStatic(LocalDateTime.class)) {
-            mocked.when(LocalDateTime::now).thenReturn(TEST_TIME);
+        try {
             service.updateBook(form);
             fail();
         } catch (IllegalArgumentException e) {

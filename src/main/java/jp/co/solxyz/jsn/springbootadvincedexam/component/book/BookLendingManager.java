@@ -5,17 +5,18 @@ import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.book.BookCheckoutHistory;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookCheckoutHistoryRepository;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.reposiroty.book.BookRepository;
+import jp.co.solxyz.jsn.springbootadvincedexam.util.UUIDGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -34,15 +35,22 @@ public class BookLendingManager {
      * 書籍貸出履歴リポジトリ
      */
     private final BookCheckoutHistoryRepository bookCheckoutHistoryRepository;
+    /** UUID生成クラス */
+    private final UUIDGenerator uuidGenerator;
+    /** 現在日時取得用Clock */
+    private final Clock clock;
 
     /**
      * コンストラクタ
      * @param bookRepository 書籍リポジトリ
      * @param bookCheckoutHistoryRepository 書籍貸出履歴リポジトリ
      */
-    public BookLendingManager(BookRepository bookRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository) {
+    public BookLendingManager(BookRepository bookRepository, BookCheckoutHistoryRepository bookCheckoutHistoryRepository,
+            UUIDGenerator uuidGenerator, Clock clock) {
         this.bookRepository = bookRepository;
         this.bookCheckoutHistoryRepository = bookCheckoutHistoryRepository;
+        this.uuidGenerator = uuidGenerator;
+        this.clock = clock;
     }
 
     /**
@@ -58,6 +66,14 @@ public class BookLendingManager {
         List<Book> notCheckoutBooks = new ArrayList<>();
 
         List<Book> books = bookRepository.findAllById(isbnList);
+        Set<String> foundIsbnSet = books.stream().map(Book::getIsbn).collect(Collectors.toSet());
+        List<String> missingIsbnList = isbnList.stream()
+                .filter(isbn -> !foundIsbnSet.contains(isbn))
+                .toList();
+        if (!missingIsbnList.isEmpty()) {
+            log.info("ISBNの一致する書籍が見つかりません。ISBN: {}", missingIsbnList);
+            throw new NoSuchElementException("ISBNの一致する書籍が存在しません。");
+        }
         List<BookCheckoutHistory> userBooks = bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId);
 
         // 借りる本
@@ -84,10 +100,10 @@ public class BookLendingManager {
 
             // チェックアウト履歴を作成
             BookCheckoutHistory bookCheckoutHistory = new BookCheckoutHistory();
-            bookCheckoutHistory.setRentalId(String.valueOf(UUID.randomUUID()));
+            bookCheckoutHistory.setRentalId(uuidGenerator.generateRentalId());
             bookCheckoutHistory.setUserId(userId);
             bookCheckoutHistory.setIsbn(book.getIsbn());
-            bookCheckoutHistory.setRentalAt(LocalDateTime.now());
+            bookCheckoutHistory.setRentalAt(LocalDateTime.now(clock));
             bookCheckoutHistories.add(bookCheckoutHistory);
 
         }
@@ -139,7 +155,7 @@ public class BookLendingManager {
                 log.info("ISBNの一致する書籍が見つかりません。ISBN: {}", isbn);
                 return new NoSuchElementException("ISBNの一致する書籍が存在しません。");
             });
-            int updatedHistoryCount = bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now());
+            int updatedHistoryCount = bookCheckoutHistoryRepository.updateReturnAt(userId, isbn, LocalDateTime.now(clock));
             if (updatedHistoryCount != 1) {
                 log.info("返却対象の貸し出し履歴が見つかりません。USER_ID: {}, ISBN: {}", userId, isbn);
                 throw new NoSuchElementException("返却対象の貸し出し履歴が存在しません。");

@@ -5,21 +5,20 @@ import jp.co.solxyz.jsn.springbootadvincedexam.app.admin.user.model.UserManageme
 import jp.co.solxyz.jsn.springbootadvincedexam.component.user.UserAccountManager;
 import jp.co.solxyz.jsn.springbootadvincedexam.infra.entity.user.UserAccount;
 import jp.co.solxyz.jsn.springbootadvincedexam.util.UUIDGenerator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.orm.jpa.JpaSystemException;
 
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,29 +41,25 @@ class UserManagementServiceTest {
     @Mock
     UserAccountManager userAccountManager;
 
+    @Mock
+    UUIDGenerator uuidGenerator;
+
+    @Mock
+    Clock clock;
+
     private final Instant TEST_TIME = Instant.parse("2020-01-01T00:00:00Z");
+    private final ZoneId TEST_ZONE = ZoneId.systemDefault();
 
     private final String TEST_UUID = "123e4567-e89b-12d3-a456-426614174000";
 
     private final String USER_ID = "123e4567-e89b-12d3-a456-426614174000";
 
-    private MockedStatic<Instant> instantMockedStatic;
-
-    private MockedStatic<UUIDGenerator> uuidGeneratorMockedStatic;
-
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        instantMockedStatic = Mockito.mockStatic(Instant.class);
-        instantMockedStatic.when(Instant::now).thenReturn(TEST_TIME);
-        uuidGeneratorMockedStatic = Mockito.mockStatic(UUIDGenerator.class);
-        uuidGeneratorMockedStatic.when(UUIDGenerator::generateUserId).thenReturn(TEST_UUID);
-    }
-
-    @AfterEach
-    void tearDown() {
-        instantMockedStatic.close();
-        uuidGeneratorMockedStatic.close();
+        when(clock.instant()).thenReturn(TEST_TIME);
+        when(clock.getZone()).thenReturn(TEST_ZONE);
+        when(uuidGenerator.generateUserId()).thenReturn(TEST_UUID);
     }
 
     @Test
@@ -426,6 +421,39 @@ class UserManagementServiceTest {
         }
 
         verify(userAccountManager, times(1)).updateUserWithoutPassword(expectedUserAccountWithoutPassword, TEST_TIME);
+    }
+
+    @Test
+    @DisplayName("パスワードがnullのユーザ情報更新ではパスワードを更新しない")
+    void shouldUpdateUserWithoutPasswordWhenPasswordIsNull() {
+        UserAccount expectedUserAccountWithoutPassword = new UserAccount();
+        expectedUserAccountWithoutPassword.setUserId(TEST_UUID);
+        expectedUserAccountWithoutPassword.setIsAdmin(true);
+        expectedUserAccountWithoutPassword.setEmail("test@solxyz.co.jp");
+        expectedUserAccountWithoutPassword.setUsername("testUsername");
+        expectedUserAccountWithoutPassword.setPassword(null);
+        expectedUserAccountWithoutPassword.setUpdatedAt(TEST_TIME);
+
+        UserAccount currentUserAccount = new UserAccount();
+        currentUserAccount.setUserId(TEST_UUID);
+        currentUserAccount.setUsername("testUsername");
+        currentUserAccount.setEmail("test@solxyz.co.jp");
+        currentUserAccount.setIsAdmin(true);
+        currentUserAccount.setUpdatedAt(TEST_TIME);
+
+        AccountProfile userManagementFormWithoutPassword = new AccountProfile();
+        userManagementFormWithoutPassword.setUserId(TEST_UUID);
+        userManagementFormWithoutPassword.setIsAdmin(true);
+        userManagementFormWithoutPassword.setEmail("test@solxyz.co.jp");
+        userManagementFormWithoutPassword.setUserName("testUsername");
+        userManagementFormWithoutPassword.setPassword(null);
+
+        when(userAccountManager.findByIdWithoutPassword(userManagementFormWithoutPassword.getUserId())).thenReturn(currentUserAccount);
+
+        service.updateUser(userManagementFormWithoutPassword);
+
+        verify(userAccountManager, times(1)).updateUserWithoutPassword(expectedUserAccountWithoutPassword, TEST_TIME);
+        verify(userAccountManager, never()).updateUserWithPassword(any(), any());
     }
 
     @Test

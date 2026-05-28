@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -68,6 +69,15 @@ class BookCartApiControllerTest {
     }
 
     @Test
+    @DisplayName("カートへの追加時にリクエストがnullの場合、BadRequestが返される")
+    void shouldReturnBadRequestWhenRequestIsNullOnAdd() {
+        ResponseEntity<Integer> response = bookCartApiController.add(null);
+
+        verify(cartSession, never()).addCart(any(Cart.class));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     @DisplayName("削除時にISBNがnullでない場合、カートから書籍を削除する")
     void shouldRemoveBookFromCartWhenIsbnIsNotNull() {
         CartIsbn cartIsbn = new CartIsbn();
@@ -89,6 +99,15 @@ class BookCartApiControllerTest {
         cartIsbn.setIsbn(null);
 
         ResponseEntity<Void> response = bookCartApiController.delete(cartIsbn);
+
+        verify(cartSession, never()).removeCart(anyString());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    @DisplayName("削除時にリクエストがnullの場合、BadRequestが返される")
+    void shouldReturnBadRequestWhenRequestIsNullOnDelete() {
+        ResponseEntity<Void> response = bookCartApiController.delete(null);
 
         verify(cartSession, never()).removeCart(anyString());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

@@ -10,7 +10,9 @@ class UUIDGeneratorTest {
     @Test
     @DisplayName("ユーザーIDが正常に生成される")
     void shouldGenerateUserIdSuccessfully() {
-        String userId = UUIDGenerator.generateUserId();
+        UUIDGenerator uuidGenerator = new UUIDGenerator();
+
+        String userId = uuidGenerator.generateUserId();
 
         assertThat(userId).isNotNull();
         assertThat(userId).matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");

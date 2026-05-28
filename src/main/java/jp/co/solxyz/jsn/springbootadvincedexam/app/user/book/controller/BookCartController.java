@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 
 import static jp.co.solxyz.jsn.springbootadvincedexam.app.user.book.constant.BookLendingPolicy.RETURN_DUE_DAYS;
 
@@ -39,15 +41,21 @@ public class BookCartController {
      * カートサービス
      */
     private final BookCartService bookCartService;
+    /**
+     * 現在日時取得用Clock
+     */
+    private final Clock clock;
 
     /**
      * コンストラクタ
      * @param cartSession カートセッション
      * @param bookCartService カートサービス
+     * @param clock 現在日時取得用Clock
      */
-    public BookCartController(CartSession cartSession, BookCartService bookCartService) {
+    public BookCartController(CartSession cartSession, BookCartService bookCartService, Clock clock) {
         this.cartSession = cartSession;
         this.bookCartService = bookCartService;
+        this.clock = clock;
     }
 
     /**
@@ -73,7 +81,7 @@ public class BookCartController {
         List<Book> unCheckedOutBooks;
         try {
             unCheckedOutBooks = bookCartService.checkout(userDetails.getUserId(), cartSession.getCartList());
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | NoSuchElementException e) {
             ModelAndView mav = new ModelAndView("user/book-cart");
             mav.addObject("errorMessage", "処理中にエラーが発生しました。");
             addCartPageAttributes(mav, cartSession.getCartList().size());
@@ -106,7 +114,7 @@ public class BookCartController {
         mav.addObject("activeMenu", "cart");
         mav.addObject("cartCount", cartCount);
         mav.addObject("returnDueDays", RETURN_DUE_DAYS);
-        mav.addObject("returnDueDateText", formatReturnDueDate(LocalDate.now().plusDays(RETURN_DUE_DAYS)));
+        mav.addObject("returnDueDateText", formatReturnDueDate(LocalDate.now(clock).plusDays(RETURN_DUE_DAYS)));
     }
 
     /**
