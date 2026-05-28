@@ -2,6 +2,7 @@ package jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.service;
 
 import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.UnreturnedBookModel;
 import jp.co.solxyz.jsn.springbootadvancedexam.component.book.BookLendingManager;
+import jp.co.solxyz.jsn.springbootadvancedexam.component.book.model.UnreturnedBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,7 +57,7 @@ class BookReturnServiceTest {
         String userId = "user1";
         String expectedUserId = "user1";
 
-        UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
+        UnreturnedBook unreturnedBook = new UnreturnedBook();
         unreturnedBook.setIsbn("isbn1");
         unreturnedBook.setTitle("title1");
         unreturnedBook.setAuthor("author1");
@@ -68,7 +69,7 @@ class BookReturnServiceTest {
         expectedUnreturnedBook.setAuthor("author1");
         expectedUnreturnedBook.setPublisher("publisher1");
 
-        List<UnreturnedBookModel> unreturnedBookList = List.of(unreturnedBook);
+        List<UnreturnedBook> unreturnedBookList = List.of(unreturnedBook);
         List<UnreturnedBookModel> expectedunreturnedBookList = List.of(expectedUnreturnedBook);
 
         when(bookLendingManager.getUnreturnedBooksByUserId(userId)).thenReturn(unreturnedBookList);
@@ -84,13 +85,13 @@ class BookReturnServiceTest {
         String userId = "user1";
         String expectedUserId = "user1";
 
-        UnreturnedBookModel unreturnedBook1 = new UnreturnedBookModel();
+        UnreturnedBook unreturnedBook1 = new UnreturnedBook();
         unreturnedBook1.setIsbn("isbn1");
         unreturnedBook1.setTitle("title1");
         unreturnedBook1.setAuthor("author1");
         unreturnedBook1.setPublisher("publisher1");
 
-        UnreturnedBookModel unreturnedBook2 = new UnreturnedBookModel();
+        UnreturnedBook unreturnedBook2 = new UnreturnedBook();
         unreturnedBook2.setIsbn("isbn2");
         unreturnedBook2.setTitle("title2");
         unreturnedBook2.setAuthor("author2");
@@ -108,7 +109,7 @@ class BookReturnServiceTest {
         expectedUnreturnedBook2.setAuthor("author2");
         expectedUnreturnedBook2.setPublisher("publisher2");
 
-        List<UnreturnedBookModel> unreturnedBookList = List.of(unreturnedBook1, unreturnedBook2);
+        List<UnreturnedBook> unreturnedBookList = List.of(unreturnedBook1, unreturnedBook2);
         List<UnreturnedBookModel> expectedunreturnedBookList = List.of(expectedUnreturnedBook1, expectedUnreturnedBook2);
 
         when(bookLendingManager.getUnreturnedBooksByUserId(userId)).thenReturn(unreturnedBookList);

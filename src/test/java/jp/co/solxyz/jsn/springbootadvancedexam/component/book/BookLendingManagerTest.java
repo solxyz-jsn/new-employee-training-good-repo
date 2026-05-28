@@ -1,6 +1,6 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.book;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.UnreturnedBookModel;
+import jp.co.solxyz.jsn.springbootadvancedexam.component.book.model.UnreturnedBook;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.BookCheckoutHistory;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
@@ -408,7 +408,7 @@ public class BookLendingManagerTest {
         history.setUserId(userId);
         List<BookCheckoutHistory> rentalUserBookList = List.of(history);
 
-        UnreturnedBookModel expectedBook = new UnreturnedBookModel();
+        UnreturnedBook expectedBook = new UnreturnedBook();
         expectedBook.setIsbn("1234567890123");
         expectedBook.setTitle("Test Title");
         expectedBook.setAuthor("Test Author");
@@ -425,7 +425,7 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(rentalUserBookList);
         when(bookRepository.findAllById(unreturnedIsbnSet)).thenReturn(List.of(book));
 
-        List<UnreturnedBookModel> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
+        List<UnreturnedBook> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
 
         verify(bookCheckoutHistoryRepository, times(1)).findUnreturnedBooksByUserId(userId);
         verify(bookRepository, times(1)).findAllById(Set.of(expectedBook.getIsbn()));
@@ -447,13 +447,13 @@ public class BookLendingManagerTest {
         history2.setRentalAt(TEST_TIME);
         history2.setUserId(userId);
 
-        UnreturnedBookModel unreturnedBook1 = new UnreturnedBookModel();
+        UnreturnedBook unreturnedBook1 = new UnreturnedBook();
         unreturnedBook1.setIsbn("1234567890123");
         unreturnedBook1.setTitle("Test Title");
         unreturnedBook1.setAuthor("Test Author");
         unreturnedBook1.setPublisher("Test Publisher");
         unreturnedBook1.setRentalAt(TEST_TIME);
-        UnreturnedBookModel unreturnedBook2 = new UnreturnedBookModel();
+        UnreturnedBook unreturnedBook2 = new UnreturnedBook();
         unreturnedBook2.setIsbn("1234567890124");
         unreturnedBook2.setTitle("Test Title 2");
         unreturnedBook2.setAuthor("Test Author 2");
@@ -474,7 +474,7 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(List.of(history1, history2));
         when(bookRepository.findAllById(Set.of(book1.getIsbn(), book2.getIsbn()))).thenReturn(List.of(book1, book2));
 
-        List<UnreturnedBookModel> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
+        List<UnreturnedBook> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
 
         assertThat(unreturnedBooks).hasSize(2);
         assertThat(unreturnedBooks.get(0)).isEqualTo(unreturnedBook1);
@@ -490,7 +490,7 @@ public class BookLendingManagerTest {
         when(bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId)).thenReturn(Collections.emptyList());
         when(bookRepository.findAllById(emptyIsbnSet)).thenReturn(Collections.emptyList());
 
-        List<UnreturnedBookModel> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
+        List<UnreturnedBook> unreturnedBooks = bookLendingManager.getUnreturnedBooksByUserId(userId);
 
         verify(bookCheckoutHistoryRepository, times(1)).findUnreturnedBooksByUserId(userId);
         verify(bookRepository, times(1)).findAllById(emptyIsbnSet);

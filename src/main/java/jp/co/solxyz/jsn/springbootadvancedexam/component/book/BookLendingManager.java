@@ -1,6 +1,6 @@
 package jp.co.solxyz.jsn.springbootadvancedexam.component.book;
 
-import jp.co.solxyz.jsn.springbootadvancedexam.app.user.book.model.UnreturnedBookModel;
+import jp.co.solxyz.jsn.springbootadvancedexam.component.book.model.UnreturnedBook;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.Book;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.entity.book.BookCheckoutHistory;
 import jp.co.solxyz.jsn.springbootadvancedexam.infra.repository.book.BookCheckoutHistoryRepository;
@@ -123,13 +123,13 @@ public class BookLendingManager {
      * @param userId ユーザID
      * @return 貸出中の本
      */
-    public List<UnreturnedBookModel> getUnreturnedBooksByUserId(String userId) {
+    public List<UnreturnedBook> getUnreturnedBooksByUserId(String userId) {
         List<BookCheckoutHistory> histories = bookCheckoutHistoryRepository.findUnreturnedBooksByUserId(userId);
         Set<String> isbnList = histories.stream().map(BookCheckoutHistory::getIsbn).collect(Collectors.toSet());
         List<Book> result = bookRepository.findAllById(isbnList);
-        List<UnreturnedBookModel> unreturnedBooks = new ArrayList<>();
+        List<UnreturnedBook> unreturnedBooks = new ArrayList<>();
         for (Book book : result) {
-            UnreturnedBookModel unreturnedBook = new UnreturnedBookModel();
+            UnreturnedBook unreturnedBook = new UnreturnedBook();
             unreturnedBook.setIsbn(book.getIsbn());
             unreturnedBook.setTitle(book.getTitle());
             unreturnedBook.setAuthor(book.getAuthor());
